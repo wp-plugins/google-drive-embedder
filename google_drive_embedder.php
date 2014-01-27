@@ -4,7 +4,7 @@
  * Plugin Name: Google Drive Embedder
  * Plugin URI: http://wp-glogin.com/drive
  * Description: Easily browse for Google Drive documents and embed directly in your posts and pages. Extends the popular Google Apps Login plugin so no extra user authentication (or admin setup) is required. 
- * Version: 1.0
+ * Version: 1.1
  * Author: Dan Lester
  * Author URI: http://wp-glogin.com/
  * License: GPL3
@@ -32,19 +32,16 @@ class gdm_google_drive_embedder {
 	}
 
 	public function gdm_media_button() {
-		global $pagenow, $wp_version;
+		global $wp_version;
 		$output = '';
 	
-		/** Only run in post/page creation and edit screens */
-		if ( in_array( $pagenow, array( 'post.php', 'page.php', 'post-new.php', 'post-edit.php' ) )) {
-			if ( version_compare( $wp_version, '3.5', '<' ) ) {
-				$img = '<img src="' . $this->my_plugin_url() . 'images/gdm-media.png" alt="Add Drive File"/>';
-				$output = '<a href="#TB_inline?width=700&height=450&inlineId=gdm-choose-drivefile" id="gdm-thickbox-trigger" class="thickbox" title="Add Drive file">' . $img . '</a>';
-			} else {
-				$img = '<span class="wp-media-buttons-icon" id="gdm-media-button"></span>';
-				$output = '<a href="#TB_inline?width=700&height=450&inlineId=gdm-choose-drivefile" id="gdm-thickbox-trigger" class="thickbox button" title="Add Drive File" style="padding-left: .4em;">'
-						  .$img.' Add Drive File</a>';
-			}
+		if ( version_compare( $wp_version, '3.5', '<' ) ) {
+			$img = '<img src="' . $this->my_plugin_url() . 'images/gdm-media.png" alt="Add Drive File"/>';
+			$output = '<a href="#TB_inline?width=700&height=450&inlineId=gdm-choose-drivefile" id="gdm-thickbox-trigger" class="thickbox" title="Add Drive file">' . $img . '</a>';
+		} else {
+			$img = '<span class="wp-media-buttons-icon" id="gdm-media-button"></span>';
+			$output = '<a href="#TB_inline?width=700&height=450&inlineId=gdm-choose-drivefile" id="gdm-thickbox-trigger" class="thickbox button" title="Add Drive File" style="padding-left: .4em;">'
+					  .$img.' Add Drive File</a>';
 		}
 		echo $output;
 	}
@@ -185,11 +182,22 @@ class gdm_google_drive_embedder {
 	// ADMIN
 	
 	public function gdm_admin_init() {
+		global $pagenow;
+
+		// Check Google Apps Login is configured - display warnings if not
 		if (apply_filters('gal_get_clientid', '') == '') {
 			add_action('admin_notices', Array($this, 'gdm_admin_auth_message'));
 			if (is_multisite()) {
 				add_action('network_admin_notices', Array($this, 'gdm_admin_auth_message'));
 			}
+		}
+		
+		// If on post/page edit screen, set up Add Drive File button
+		if (in_array($pagenow, array('post.php', 'page.php', 'post-new.php', 'post-edit.php')) ) {
+			add_action( 'admin_head', Array($this, 'gdm_admin_downloads_icon') );
+			add_action( 'media_buttons', Array($this, 'gdm_media_button'), 11 );
+			add_action( 'admin_enqueue_scripts', Array($this, 'gdm_admin_load_scripts') );
+			add_action( 'admin_footer', Array($this, 'gdm_admin_footer') );
 		}
 	}
 	
@@ -225,18 +233,11 @@ class gdm_google_drive_embedder {
 	}
 
 	protected function add_actions() {
-		add_action( 'admin_head', Array($this, 'gdm_admin_downloads_icon') );
 		add_filter('gal_gather_scopes', Array($this, 'gdm_gather_scopes') );
 		
 		add_shortcode( 'google-drive-embed', Array($this, 'gdm_shortcode_display_drivefile') );
 		
-		global $pagenow;
 		if (is_admin()) {
-			if (in_array($pagenow, array('post.php', 'page.php', 'post-new.php', 'post-edit.php')) ) {
-				add_action( 'media_buttons', Array($this, 'gdm_media_button'), 11 );
-				add_action( 'admin_enqueue_scripts', Array($this, 'gdm_admin_load_scripts') );
-				add_action( 'admin_footer', Array($this, 'gdm_admin_footer') );
-			}
 			add_action( 'admin_init', array($this, 'gdm_admin_init') );
 		}
 	}

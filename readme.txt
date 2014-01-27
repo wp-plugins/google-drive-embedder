@@ -3,7 +3,7 @@ Contributors: danlester
 Tags: drive, google, document, google apps, google drive, sso, single-sign-on, auth, intranet, embed
 Requires at least: 3.3
 Tested up to: 3.8
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -134,6 +134,10 @@ or upload the ZIP file directly in the Plugins section of your Wordpress admin
 1. Follow the instructions to configure the Google Apps Login plugin post-installation
 
 == Changelog ==
+
+= 1.1 =
+Multisite installations now have the choice of Network Activate (so Add Drive File available on all sites), or 
+individual sub-site activation.
 
 = 1.0 =
 Google Drive document embedder
