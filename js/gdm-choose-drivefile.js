@@ -7,9 +7,13 @@ var gdmDriveMgr = {
 	
 	makeApiCall : function(thisPageToken) {
 		var self = this;
+		var current_search_query = gdmDriveMgr.current_search_query;
 		var params = {maxResults: 8, trashed: false};
 		if (thisPageToken) {
 			params.pageToken = thisPageToken;
+		}
+		if (current_search_query != "") {
+			params.q = "title contains '"+current_search_query+"'";
 		}
 		var restRequest = gapi.client.request({
 			  'path': '/drive/v2/files',
@@ -19,7 +23,7 @@ var gdmDriveMgr = {
 		jQuery('#gdm-nextprev-div a').attr('disabled', 'disabled');
 		
 		restRequest.execute(function(resp) {
-			if (resp.error) {
+			if (resp.error || !resp.items) {
 				self.gdmStartThinking();
 				jQuery('#gdm-thinking-text').html('<p>Please enable <b>Drive API</b> on the APIs page in '
 						+'<a href="http://cloud.google.com/console" target="_blank">Google Cloud Console</a>'
@@ -28,19 +32,35 @@ var gdmDriveMgr = {
 						+'<p>Error message from Google: <i>'+self.escapeHTML(resp.error.message)+'</i></p>'
 				);
 			}
-			else if (resp.items && resp.items.length > 0) {
+			else {
 				self.gdmStopThinking();
 				jQuery('#gdm-nextprev-div a').removeAttr('disabled');
 	
 				var fileslist = document.createDocumentFragment();
 				
-				for (var i=0 ; i<resp.items.length ; ++i) {
-			        fileslist.appendChild(self.gdmMakeListItem(resp.items[i]).get(0));
+				if (resp.items.length > 0) {
+					for (var i=0 ; i<resp.items.length ; ++i) {
+				        fileslist.appendChild(self.gdmMakeListItem(resp.items[i]).get(0));
+					}
+				}
+				else {
+				    var htmlItem = jQuery('<div class="gdm-nofiles-div" />');
+				    var spanItem = jQuery('<span class="gdm-drivefile-title">No matching Drive files found</span>');
+				    
+				    if (current_search_query != '') {
+				    	spanItem.append(' (<a href="#" id="gdm-search-clear">Clear search</a>)');
+				    }
+				    
+				    htmlItem.append(spanItem);
+
+					fileslist.appendChild( htmlItem.get(0) );
 				}
 				
 				jQuery('#gdm-filelist').empty();
 				jQuery('#gdm-filelist').append(fileslist);
 				jQuery('.gdm-drivefile-div').click( self.gdmSelectDriveFile );
+				
+				jQuery('#gdm-search-clear').click( self.gdmClearSearch );
 				
 				jQuery('#gdm-filelist').show();
 				
@@ -67,12 +87,6 @@ var gdmDriveMgr = {
 	
 				// Disable OK button
 				self.gdmNothingSelected();
-			}
-			else {
-				self.gdmStartThinking();
-				jQuery('#gdm-thinking-text').html('<p>You do not have any <a href="http://drive.google.com/" target="_blank">'
-						+'Google Drive</a> files in this account!</p>'
-				);
 			}
 		});
 	},
@@ -223,6 +237,24 @@ var gdmDriveMgr = {
 		}
 	},
 	
+	gdmSearchKeyPress : function(e) {
+		if (e.keyCode == 13) {
+			gdmDriveMgr.setSearchQuery(jQuery('#gdm-search-box').val());
+		}
+	},
+	
+	current_search_query: "",
+	
+	setSearchQuery : function(str) {
+		gdmDriveMgr.current_search_query = str.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+		gdmDriveMgr.makeApiCall();
+	},
+	
+	gdmClearSearch : function() {
+		jQuery('#gdm-search-box').val("");
+		gdmDriveMgr.setSearchQuery("");
+	},
+	
 	gdmStartThinking : function() {
 		jQuery('.gdm-browsebox').hide();
 		jQuery('#gdm-thinking').show();
@@ -253,6 +285,7 @@ var gdmDriveMgr = {
 	
 	handleFirstAuth : function(authResult) {
 		  if (authResult && !authResult.error) {
+			 jQuery('#gdm-search-box').removeAttr('disabled');
 			 gdmDriveMgr.makeApiCall();
 		  } else {
 			  jQuery('#gdm-thinking').hide();
@@ -273,6 +306,7 @@ var gdmDriveMgr = {
 	
 	handleSecondAuth : function(authResult) {
 		if (authResult && !authResult.error) {
+			jQuery('#gdm-search-box').removeAttr('disabled');
 			gdmDriveMgr.makeApiCall();
 	  } else {
 		alert("Failed to authenticate with Google");
@@ -338,8 +372,10 @@ jQuery(document).ready(function () {
     
     jQuery('#gdm-linktypes-div').find('input, label').attr('disabled', 'disabled');
     
+    jQuery('#gdm-search-box').on('keypress', gdmDriveMgr.gdmSearchKeyPress );
+    
 	thickDims = function() {
-		var tbWidth = 640, tbHeight = 500;
+		var tbWidth = 640, tbHeight = 534;
 		var tbWindow = jQuery('#TB_window'), H = jQuery(window).height(), W = jQuery(window).width(), w, h;
 
 		w = (tbWidth && tbWidth < W - 90) ? tbWidth : W - 90;

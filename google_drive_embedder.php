@@ -4,7 +4,7 @@
  * Plugin Name: Google Drive Embedder
  * Plugin URI: http://wp-glogin.com/drive
  * Description: Easily browse for Google Drive documents and embed directly in your posts and pages. Extends the popular Google Apps Login plugin so no extra user authentication (or admin setup) is required. 
- * Version: 1.1
+ * Version: 1.2
  * Author: Dan Lester
  * Author URI: http://wp-glogin.com/
  * License: GPL3
@@ -37,10 +37,10 @@ class gdm_google_drive_embedder {
 	
 		if ( version_compare( $wp_version, '3.5', '<' ) ) {
 			$img = '<img src="' . $this->my_plugin_url() . 'images/gdm-media.png" alt="Add Drive File"/>';
-			$output = '<a href="#TB_inline?width=700&height=450&inlineId=gdm-choose-drivefile" id="gdm-thickbox-trigger" class="thickbox" title="Add Drive file">' . $img . '</a>';
+			$output = '<a href="#TB_inline?width=700&height=484&inlineId=gdm-choose-drivefile" id="gdm-thickbox-trigger" class="thickbox" title="Add Drive file">' . $img . '</a>';
 		} else {
 			$img = '<span class="wp-media-buttons-icon" id="gdm-media-button"></span>';
-			$output = '<a href="#TB_inline?width=700&height=450&inlineId=gdm-choose-drivefile" id="gdm-thickbox-trigger" class="thickbox button" title="Add Drive File" style="padding-left: .4em;">'
+			$output = '<a href="#TB_inline?width=700&height=484&inlineId=gdm-choose-drivefile" id="gdm-thickbox-trigger" class="thickbox button" title="Add Drive File" style="padding-left: .4em;">'
 					  .$img.' Add Drive File</a>';
 		}
 		echo $output;
@@ -64,6 +64,11 @@ class gdm_google_drive_embedder {
 		?>
 		<div id="gdm-choose-drivefile" style="display: none;">
 			<div class="wrap gdm-wrap">
+				
+				<div id="gdm-search-area">
+					<input type="text" id="gdm-search-box" placeholder="Enter text to search..." disabled="disabled"></input>
+				</div>
+			
 				<div id="gdm-thinking" class="gdm-browsebox">
 					<div id="gdm-thinking-text">Loading...</div>
 				</div>

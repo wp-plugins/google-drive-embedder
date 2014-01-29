@@ -4,6 +4,17 @@
 	 margin-top: 16px;
 }
 
+#gdm-search-area {
+	width: 600px;
+	margin-bottom: 4px;	
+}
+
+#gdm-search-box {
+	width: 600px;
+	background: url(../images/search.png) no-repeat 4px center;
+	padding-left: 24px;
+}
+
 div.gdm-browsebox {
 	width: 600px;
 	height: 240px;
@@ -13,6 +24,12 @@ div.gdm-browsebox {
 div.gdm-drivefile-div {
 	width: 600px;
 	height: 2.5em;
+}
+
+div.gdm-nofiles-div {
+	width: 600px;
+	height: 2.5em;
+	padding-left: 4px;
 }
 
 #gdm-nextprev-div {

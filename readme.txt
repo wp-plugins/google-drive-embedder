@@ -3,7 +3,7 @@ Contributors: danlester
 Tags: drive, google, document, google apps, google drive, sso, single-sign-on, auth, intranet, embed
 Requires at least: 3.3
 Tested up to: 3.8
-Stable tag: 1.1
+Stable tag: 1.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -22,6 +22,8 @@ You will need to set document sharing settings to ensure your website viewers ha
 'anyone with the link can view' to be visible to all visitors).
 
 **This plugin requires that you also install the free (or premium) version of the popular [Google Apps Login](http://wordpress.org/plugins/google-apps-login/) plugin**
+
+Now with search functionality to find the Drive files you want!
 
 Google Drive document embedding and one-click login will work for the following domains and user accounts:
 
@@ -134,6 +136,9 @@ or upload the ZIP file directly in the Plugins section of your Wordpress admin
 1. Follow the instructions to configure the Google Apps Login plugin post-installation
 
 == Changelog ==
+
+= 1.2 =
+Added Search box functionality
 
 = 1.1 =
 Multisite installations now have the choice of Network Activate (so Add Drive File available on all sites), or 
