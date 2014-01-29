@@ -66,7 +66,7 @@ class gdm_google_drive_embedder {
 			<div class="wrap gdm-wrap">
 				
 				<div id="gdm-search-area">
-					<input type="text" id="gdm-search-box" placeholder="Enter text to search..." disabled="disabled"></input>
+					<input type="text" id="gdm-search-box" placeholder="Enter text to search (then press Enter)" disabled="disabled"></input>
 				</div>
 			
 				<div id="gdm-thinking" class="gdm-browsebox">
