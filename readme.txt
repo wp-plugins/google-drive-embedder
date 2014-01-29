@@ -12,14 +12,11 @@ plugin so no extra user auth required.
 
 == Description ==
 
-Google Drive Embedder gives authors easy access to their Google Drive in a popup box, where they can select documents to embed 
-directly into their post or page. Just as easily as picking a photo from the WordPress media gallery.
+Google Drive Embedder gives authors easy access to their Google Drive in a popup box, where they can select documents to embed directly into their post or page. Just as easily as picking a photo from the WordPress media gallery.
 
-Documents can be embedded in-line, using Google's read-only interactive viewer for your audience to read them. Documents can also 
-be placed in your site as links to open up editable files (either in the same or a new browser tab).
+Documents can be embedded in-line, using Google's read-only interactive viewer for your audience to read them. Documents can also be placed in your site as links to open up editable files (either in the same or a new browser tab).
 
-You will need to set document sharing settings to ensure your website viewers have access to view your documents (e.g. at least 
-'anyone with the link can view' to be visible to all visitors).
+You will need to set document sharing settings to ensure your website viewers have access to view your documents (e.g. at least 'anyone with the link can view' to be visible to all visitors).
 
 **This plugin requires that you also install the free (or premium) version of the popular [Google Apps Login](http://wordpress.org/plugins/google-apps-login/) plugin**
 
