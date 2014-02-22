@@ -4,7 +4,7 @@
  * Plugin Name: Google Drive Embedder
  * Plugin URI: http://wp-glogin.com/drive
  * Description: Easily browse for Google Drive documents and embed directly in your posts and pages. Extends the popular Google Apps Login plugin so no extra user authentication (or admin setup) is required. 
- * Version: 1.2
+ * Version: 1.3
  * Author: Dan Lester
  * Author URI: http://wp-glogin.com/
  * License: GPL3
@@ -89,22 +89,26 @@ class gdm_google_drive_embedder {
 					<div>
 						<span class="gdm-linktypes-span">
 							<input type="radio" name="gdm-linktypes" id="gdm-linktype-normal" checked="checked" />
-							<label for="gdm-linktype-normal">Normal file link</label>
+							<label for="gdm-linktype-normal">Viewer file link</label>
 						</span>
 						<span id="gdm-linktype-normal-options" class="gdm-linktype-options">
+							<input type="checkbox" id="gdm-linktype-normal-plain" /> 
+							<label for="gdm-linktype-normal-plain">Plain style</label>
+						
+							&nbsp; &nbsp; &nbsp; &nbsp;
 							<input type="checkbox" id="gdm-linktype-normal-window" checked="checked" /> 
 							<label for="gdm-linktype-normal-window">Open in new window</label>
 						</span>
 					</div>
 					
-					<div>
+					<div class="gdm-downloadable-only">
 						<span class="gdm-linktypes-span">
-							<input type="radio" name="gdm-linktypes" id="gdm-linktype-plain" />
-							<label for="gdm-linktype-plain">Plain text link</label>
+							<input type="radio" name="gdm-linktypes" id="gdm-linktype-download" />
+							<label for="gdm-linktype-download">Download file link</label>
 						</span>
-						<span id="gdm-linktype-plain-options" class="gdm-linktype-options">
-							<input type="checkbox" id="gdm-linktype-plain-window" checked="checked" /> 
-							<label for="gdm-linktype-plain-window">Open in new window</label>
+						<span id="gdm-linktype-download-options" class="gdm-linktype-options">
+							<input type="checkbox" id="gdm-linktype-download-plain" /> 
+							<label for="gdm-linktype-download-plain">Plain style</label>
 						</span>
 					</div> 
 					
@@ -115,6 +119,7 @@ class gdm_google_drive_embedder {
 						</span>
 						<span id="gdm-linktype-embed-options" class="gdm-linktype-options">
 							<label for="gdm-linktype-embed-width">Width</label> <input type="text" id="gdm-linktype-embed-width" size="8" value="100%" />
+							&nbsp; &nbsp; &nbsp; &nbsp;
 							<label for="gdm-linktype-embed-height">Height</label> <input type="text" id="gdm-linktype-embed-height" size="8" value="400" />
 						</span>
 					</div> 
@@ -156,21 +161,25 @@ class gdm_google_drive_embedder {
 		$url = $atts['url'];
 		$title = isset($atts['title']) ? $atts['title'] : $url; // Should be html-encoded already
 		
-		$linkstyle = isset($atts['style']) && in_array($atts['style'], Array('normal', 'plain', 'embed')) 
+		$linkstyle = isset($atts['style']) && in_array($atts['style'], Array('normal', 'plain', 'download', 'embed')) 
 						? $atts['style'] : 'normal';
 		$returnhtml = '';
 		switch ($linkstyle) {
 			case 'normal':
+			case 'download':
+			case 'plain':
 				$imghtml = '';
 				if (isset($atts['icon'])) {
 					$imghtml = '<img src="'.$atts['icon'].'" width="16" height="16" />';
 				}
-				$newwindow = isset($atts['newwindow']) ? ' target="_blank"' : '';
-				$returnhtml = '<p><span class="gdm-drivefile-embed">'.$imghtml.' <a href="'.$url.'"'.$newwindow.'>'.$title.'</a></span></p>';
-				break;
-			case 'plain':
-				$newwindow = isset($atts['newwindow']) ? ' target="_blank"' : '';
-				$returnhtml = '<a href="'.$url.'"'.$newwindow.'>'.$title.'</a>';
+				$newwindow = isset($atts['newwindow']) && $atts['newwindow']=='yes' ? ' target="_blank"' : '';
+				$ahref = '<a href="'.$url.'"'.$newwindow.'>'.$title.'</a>';
+				if ((isset($atts['plain']) && $atts['plain']=='yes') || $linkstyle=='plain') {
+					$returnhtml = $ahref;
+				}
+				else {
+					$returnhtml = '<p><span class="gdm-drivefile-embed">'.$imghtml.' '.$ahref.'</span></p>';
+				}
 				break;
 			case 'embed':
 				$width = isset($atts['width']) ? $atts['width'] : '100%';
@@ -212,7 +221,7 @@ class gdm_google_drive_embedder {
 	        	<p>You will need to install and configure 
 	        		<a href="http://wp-glogin.com/?utm_source=Admin%20Configmsg&utm_medium=freemium&utm_campaign=Drive" 
 	        		target="_blank">Google Apps Login</a>  
-	        		plugin in order for Google Drive Media to work. (Requires version 2.0+ of Free or Premium)
+	        		plugin in order for Google Drive Embedder to work. (Requires version 2.0+ of Free or Premium)
 	        	</p>
 	    	</div> <?php
 		}

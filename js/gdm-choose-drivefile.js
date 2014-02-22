@@ -92,20 +92,24 @@ var gdmDriveMgr = {
 	},
 	
 	gdmMakeListItem : function(drivefile) {
-	    var titulo = drivefile.title;
-	    var fechaUpd = drivefile.modifiedDate;
-	    var userUpd = drivefile.lastModifyingUserName;
-	    var userEmbed = drivefile.embedLink;
-	    var userAltLink = drivefile.alternateLink;
-	    var iconLink = drivefile.iconLink;
+	    var directEmbedUrl = drivefile.embedLink ? drivefile.embedLink : '';
+	    var viewerLink = drivefile.alternateLink ? drivefile.alternateLink : '';
+	    var downloadLink = drivefile.webContentLink ? drivefile.webContentLink : '';
+
+	    if (!directEmbedUrl && drivefile.webContentLink && drivefile.shared) {
+	    	directEmbedUrl = '//docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(drivefile.webContentLink);
+	    }
 	    
 	    var htmlItem = jQuery('<div class="gdm-drivefile-div" />');
 	
 	    var iconSpan = jQuery('<span class="gdm-drivefile-icon" />')
-	    		.append(jQuery('<img src="'+iconLink+'" width="16" height="16" />'));
+	    		.append(jQuery('<img src="'+drivefile.iconLink+'" width="16" height="16" />'));
 	    var titleSpan = jQuery('<span class="gdm-drivefile-title" />')
-	    		.append(jQuery('<a />', { 'href': userAltLink, 'class': "gdm-file-link", 'gdm-data-embedurl': userEmbed ? userEmbed : '' } )
-	    		.text(titulo));
+	    		.append(jQuery('<a />', { 'href': viewerLink, 'class': "gdm-file-link",
+	    								  'gdm-data-embedurl': directEmbedUrl,
+	    								  'gdm-data-downloadurl': downloadLink
+	    								  } )
+	    		.text(drivefile.title));
 	    
 	    htmlItem.append(iconSpan);
 	    htmlItem.append(titleSpan);
@@ -127,8 +131,9 @@ var gdmDriveMgr = {
 			
 			var anchor = self.find('span.gdm-drivefile-title a');
 			var embedurl = anchor.attr('gdm-data-embedurl');
+			var downloadurl = anchor.attr('gdm-data-downloadurl');
 			
-			gdmDriveMgr.gdmSomethingSelected(embedurl != '');
+			gdmDriveMgr.gdmSomethingSelected(downloadurl != '', embedurl != '');
 		}
 		
 		event.preventDefault();
@@ -141,11 +146,20 @@ var gdmDriveMgr = {
 		baseLinkTypes.find('input, label').attr('disabled', 'disabled');
 	},
 	
-	gdmSomethingSelected : function(canEmbed) {
+	gdmSomethingSelected : function(canDownload, canEmbed) {
 		jQuery('#gdm-insert-drivefile').removeAttr('disabled');
 		var baseLinkTypes = jQuery('#gdm-linktypes-div');
 		baseLinkTypes.find('input, label').removeAttr('disabled');
 	
+		if (!canDownload) {
+			baseLinkTypes.find('.gdm-downloadable-only').find('input, label').attr('disabled', 'disabled');
+			if (jQuery('#gdm-linktype-download').prop("checked")==true) {
+				jQuery('#gdm-linktype-normal').prop("checked", true);
+				jQuery('#gdm-linktype-normal-options').show();
+				jQuery('#gdm-linktype-download-options').hide();
+			}
+		}
+		
 		if (!canEmbed) {
 			// baseLinkTypes minus embed ones
 			baseLinkTypes.find('.gdm-embeddable-only').find('input, label').attr('disabled', 'disabled');
@@ -174,11 +188,15 @@ var gdmDriveMgr = {
 				if (jQuery('#gdm-linktype-normal-window').prop("checked")) {
 					extraattrs = ' newwindow="yes"';
 				}
+				if (jQuery('#gdm-linktype-normal-plain').prop("checked")) {
+					extraattrs += ' plain="yes"';
+				}
 			}
-			else if (jQuery('#gdm-linktype-plain').prop("checked")==true) {
-				linkStyle = 'plain';
-				if (jQuery('#gdm-linktype-plain-window').prop("checked")) {
-					extraattrs = ' newwindow="yes"';
+			else if (jQuery('#gdm-linktype-download').prop("checked")==true) {
+				linkStyle = 'download';
+				url = link.attr('gdm-data-downloadurl');
+				if (jQuery('#gdm-linktype-download-plain').prop("checked")) {
+					extraattrs += ' plain="yes"';
 				}
 			}
 			else if (jQuery('#gdm-linktype-embed').prop("checked")==true) {
@@ -207,7 +225,7 @@ var gdmDriveMgr = {
 	gdmNormalCheckChange : function() {
 		if (jQuery(this).attr('value')) {
 			jQuery('#gdm-linktype-normal-options').show();
-			jQuery('#gdm-linktype-plain-options').hide();
+			jQuery('#gdm-linktype-download-options').hide();
 			jQuery('#gdm-linktype-embed-options').hide();
 		}
 		else {
@@ -215,21 +233,21 @@ var gdmDriveMgr = {
 		}
 	},
 	
-	gdmPlainCheckChange : function() {
+	gdmDownloadCheckChange : function() {
 		if (jQuery(this).attr('value')) {
-			jQuery('#gdm-linktype-plain-options').show();
+			jQuery('#gdm-linktype-download-options').show();
 			jQuery('#gdm-linktype-normal-options').hide();
 			jQuery('#gdm-linktype-embed-options').hide();
 		}
 		else {
-			jQuery('#gdm-linktype-plain-options').hide();
+			jQuery('#gdm-linktype-download-options').hide();
 		}
 	},
 	
 	gdmEmbedCheckChange : function() {
 		if (jQuery(this).attr('value')) {
 			jQuery('#gdm-linktype-embed-options').show();
-			jQuery('#gdm-linktype-plain-options').hide();
+			jQuery('#gdm-linktype-download-options').hide();
 			jQuery('#gdm-linktype-normal-options').hide();
 		}
 		else {
@@ -364,10 +382,10 @@ jQuery(document).ready(function () {
     
     
     jQuery('#gdm-linktype-normal').change( gdmDriveMgr.gdmNormalCheckChange );
-    jQuery('#gdm-linktype-plain').change( gdmDriveMgr.gdmPlainCheckChange );
+    jQuery('#gdm-linktype-download').change( gdmDriveMgr.gdmDownloadCheckChange );
     jQuery('#gdm-linktype-embed').change( gdmDriveMgr.gdmEmbedCheckChange );
     
-    jQuery('#gdm-linktype-plain-options').hide();
+    jQuery('#gdm-linktype-download-options').hide();
     jQuery('#gdm-linktype-embed-options').hide();
     
     jQuery('#gdm-linktypes-div').find('input, label').attr('disabled', 'disabled');
