@@ -17,7 +17,7 @@ Documents can be embedded in-line, using Google's read-only interactive viewer f
 
 You will need to set document sharing settings to ensure your website viewers have access to view your documents (e.g. at least 'anyone with the link can view' to be visible to all visitors).
 
-**This plugin requires that you also install the free (or premium) version of the popular [Google Apps Login](http://wordpress.org/plugins/google-apps-login/) plugin**
+**This plugin requires that you also install the free (or premium) version of the popular [Google Apps Login](http://wp-glogin.com/wpgoogleappslogin) plugin**
 
 Now with search functionality to find the Drive files you want!
 
@@ -44,7 +44,7 @@ obtain two simple codes from Google.
 
 = Google Apps Login =
 
-The [Google Apps Login](http://wordpress.org/plugins/google-apps-login/) plugin (which you must also install) 
+The [Google Apps Login](http://wp-glogin.com/wpgoogleappslogin) plugin (which you must also install) 
 allows existing Wordpress user accounts to login to the website 
 using Google to securely authenticate their account. This means that if they are already logged into Gmail for example,
 they can simply click their way through the Wordpress login screen - no username or password is explicitly required!
@@ -54,7 +54,7 @@ Full support and premium features are also available for purchase:
 Eliminate the need for Google Apps domain admins to  separately manage WordPress user accounts, and get piece 
 of mind that only authorized employees have access to the organizations's websites and intranet.
 
-**See [http://wp-glogin.com/](http://wp-glogin.com/)**
+**See [http://wp-glogin.com/](http://wp-glogin.com/?utm_source=Drive%20Readme&utm_medium=freemium&utm_campaign=Freemium)**
 
 
 == Screenshots ==
