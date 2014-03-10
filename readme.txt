@@ -86,6 +86,20 @@ style. You should also see a checkbox for 'Plain style' which will give you the 
 The 'Embed document' option is still the same, but now supports extra formats for which embed was disabled in older versions of the 
 plugin.
 
+= I embed a (non-Google) document, but I just see some HTML in the published post =
+
+Specifically, you see something starting:
+
+&lt;!DOCTYPE html&gt;  
+&lt;html...  
+&lt;head...  
+
+Most likely, you need to increase sharing settings for the file. In your Google Drive, find the file and click 
+'Share'. Click 'Change', and then on 'Anyone with the link can view'. Click 'Done'.
+
+If you reload your published page or post in WordPress, it should now display properly, or at least give a message
+saying that the document type is unsupported. Please get in touch if not!
+
 = How is this different to the plugin Google Doc Embedder? =
 
 Google Doc Embedder only allows you to embed other files such as PDF, Word etc in your site. It has nothing much to do 
