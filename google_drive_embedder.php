@@ -4,7 +4,7 @@
  * Plugin Name: Google Drive Embedder
  * Plugin URI: http://wp-glogin.com/drive
  * Description: Easily browse for Google Drive documents and embed directly in your posts and pages. Extends the popular Google Apps Login plugin so no extra user authentication (or admin setup) is required. 
- * Version: 1.3
+ * Version: 1.4
  * Author: Dan Lester
  * Author URI: http://wp-glogin.com/
  * License: GPL3
@@ -225,7 +225,7 @@ class gdm_google_drive_embedder {
 	        	</p>
 	    	</div> <?php
 		}
-		
+
 	
 	// AUX 
 	

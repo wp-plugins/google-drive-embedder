@@ -2,8 +2,8 @@
 Contributors: danlester
 Tags: drive, google, document, google apps, google drive, sso, single-sign-on, auth, intranet, embed
 Requires at least: 3.3
-Tested up to: 3.8
-Stable tag: 1.3
+Tested up to: 3.9
+Stable tag: 1.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -119,7 +119,7 @@ plugin page, but we recommend sending us an email instead if possible.
 
 This Google Drive plugin extends the Google Apps Login plugin, making use of that plugin's settings rather than 
 insisting that you register a new whole new application with Google for each plugin separately. For those of your users 
-who choosing to Login via Google to connect to your WordPress site, they only need to authenticate once to be able to browse 
+who choose to Login via Google to connect to your WordPress site, they only need to authenticate once to be able to browse 
 their Google Drive through the Google Drive plugin, rather than having to click a second time to allow Drive access.
 
 Because of this, the Google Drive plugin itself requires no configuration at all - it is delegated to Google Apps Login.
@@ -177,6 +177,10 @@ or upload the ZIP file directly in the Plugins section of your Wordpress admin
 1. Follow the instructions to configure the Google Apps Login plugin post-installation
 
 == Changelog ==
+
+= 1.4 =
+
+Layout changes ready for WordPress 3.9 release
 
 = 1.3 =
 

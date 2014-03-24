@@ -23,18 +23,18 @@ div.gdm-browsebox {
 
 div.gdm-drivefile-div {
 	width: 600px;
-	height: 2.5em;
+	height: 30px;
 }
 
 div.gdm-nofiles-div {
 	width: 600px;
-	height: 2.5em;
+	height: 30px;
 	padding-left: 4px;
 }
 
 #gdm-nextprev-div {
 	width: 600px;
-	height: 1.5em;
+	height: 18px;
 }
 
 #gdm-nextprev-div a#gdm-prev-link {
@@ -51,7 +51,7 @@ div.gdm-nofiles-div {
 }
 
 #gdm-thinking-text p {
-	line-height: 2em;
+	line-height: 20px;
 }
 
 #gdm-authbtn div {
@@ -66,8 +66,8 @@ div.gdm-nofiles-div {
 
 div.gdm-drivefile-div span {
 	padding: 6px;
-	height: 2.5em;
-	line-height: 2.5em;
+	height: 30px;
+	line-height: 30px;
 }
 
 .gdm-drivefile-icon {
@@ -78,6 +78,7 @@ div.gdm-drivefile-div span {
 
 .gdm-drivefile-icon img {
 	vertical-align: middle;
+	margin-bottom: 4px;
 }
 
 span.gdm-drivefile-title {
@@ -94,7 +95,7 @@ span.gdm-drivefile-title {
 }
 
 .gdm-linktypes-span {
-	height: 1em;
+	height: 12px;
 	vertical-align: top;
 }
 

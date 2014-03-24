@@ -123,7 +123,7 @@ var gdmDriveMgr = {
 		
 		if (self.hasClass('gdm-selected')) {
 			self.removeClass('gdm-selected');
-			this.gdmNothingSelected();
+			gdmDriveMgr.gdmNothingSelected();
 		}
 		else {
 			jQuery('.gdm-drivefile-div.gdm-selected').removeClass('gdm-selected');
