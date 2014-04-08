@@ -5,6 +5,9 @@ var gdmDriveMgr = {
 
 	gdmPrevTokenStore : {},
 	
+	savedWidth : '',
+	savedHeight : '',
+	
 	makeApiCall : function(thisPageToken) {
 		var self = this;
 		var current_search_query = gdmDriveMgr.current_search_query;
@@ -92,23 +95,33 @@ var gdmDriveMgr = {
 	},
 	
 	gdmMakeListItem : function(drivefile) {
-	    var directEmbedUrl = drivefile.embedLink ? drivefile.embedLink : '';
-	    var viewerLink = drivefile.alternateLink ? drivefile.alternateLink : '';
-	    var downloadLink = drivefile.webContentLink ? drivefile.webContentLink : '';
-
-	    if (!directEmbedUrl && drivefile.webContentLink && drivefile.shared) {
-	    	directEmbedUrl = '//docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(drivefile.webContentLink);
-	    }
+		var links = gdmDriveFileHandler.getUrlsAndReasons(drivefile);
 	    
+		var attrs = 
+			 { 'href': links.viewer.url, 'class': "gdm-file-link",
+			  'gdm-data-embedurl': links.embed.url,
+			  'gdm-data-downloadurl': links.download.url
+			  };
+		
+		if (links.embed.reason) {
+			attrs['gdm-data-embedreason'] = links.embed.reason;
+		}
+		if (links.extra) {
+			attrs['gdm-data-extra'] = links.extra;
+		}
+		if (links.width) {
+			attrs['gdm-data-width'] = links.width;
+		}
+		if (links.height) {
+			attrs['gdm-data-height'] = links.height;
+		}
+			  
 	    var htmlItem = jQuery('<div class="gdm-drivefile-div" />');
 	
 	    var iconSpan = jQuery('<span class="gdm-drivefile-icon" />')
 	    		.append(jQuery('<img src="'+drivefile.iconLink+'" width="16" height="16" />'));
 	    var titleSpan = jQuery('<span class="gdm-drivefile-title" />')
-	    		.append(jQuery('<a />', { 'href': viewerLink, 'class': "gdm-file-link",
-	    								  'gdm-data-embedurl': directEmbedUrl,
-	    								  'gdm-data-downloadurl': downloadLink
-	    								  } )
+	    		.append(jQuery('<a />', attrs )
 	    		.text(drivefile.title));
 	    
 	    htmlItem.append(iconSpan);
@@ -132,8 +145,10 @@ var gdmDriveMgr = {
 			var anchor = self.find('span.gdm-drivefile-title a');
 			var embedurl = anchor.attr('gdm-data-embedurl');
 			var downloadurl = anchor.attr('gdm-data-downloadurl');
-			
-			gdmDriveMgr.gdmSomethingSelected(downloadurl != '', embedurl != '');
+			var embedreason = anchor.attr('gdm-data-embedreason');
+			var width = anchor.attr('gdm-data-width');
+			var height = anchor.attr('gdm-data-height');
+			gdmDriveMgr.gdmSomethingSelected(downloadurl != '', embedurl != '', embedreason, width, height);
 		}
 		
 		event.preventDefault();
@@ -144,9 +159,10 @@ var gdmDriveMgr = {
 		jQuery('#gdm-insert-drivefile').attr('disabled', 'disabled');
 		var baseLinkTypes = jQuery('#gdm-linktypes-div');
 		baseLinkTypes.find('input, label').attr('disabled', 'disabled');
+		jQuery('#gdm-linktype-embed-reasons').hide();
 	},
 	
-	gdmSomethingSelected : function(canDownload, canEmbed) {
+	gdmSomethingSelected : function(canDownload, canEmbed, embedreason, width, height) {
 		jQuery('#gdm-insert-drivefile').removeAttr('disabled');
 		var baseLinkTypes = jQuery('#gdm-linktypes-div');
 		baseLinkTypes.find('input, label').removeAttr('disabled');
@@ -168,6 +184,27 @@ var gdmDriveMgr = {
 				jQuery('#gdm-linktype-normal-options').show();
 				jQuery('#gdm-linktype-embed-options').hide();
 			}
+			jQuery('#gdm-linktype-embed-reasons').show();
+			jQuery('#gdm-linktype-embed-reasons').html(' - '+gdmDriveFileHandler.getReasonText(embedreason));
+		}
+		else {
+			jQuery('#gdm-linktype-embed-reasons').hide();
+			if (width) {
+				gdmDriveMgr.savedWidth = jQuery('#gdm-linktype-embed-width').attr('value');
+				jQuery('#gdm-linktype-embed-width').attr('value', width);
+			}
+			else if (gdmDriveMgr.savedWidth) {
+				jQuery('#gdm-linktype-embed-width').attr('value', gdmDriveMgr.savedWidth);
+			}
+			
+			if (height) {
+				gdmDriveMgr.savedHeight = jQuery('#gdm-linktype-embed-height').attr('value');
+				jQuery('#gdm-linktype-embed-height').attr('value', height);
+			}
+			else if (gdmDriveMgr.savedHeight) {
+				jQuery('#gdm-linktype-embed-height').attr('value', gdmDriveMgr.savedHeight);
+			}
+			// set width and height
 		}
 	},
 	
@@ -205,6 +242,10 @@ var gdmDriveMgr = {
 				var width = gdmDriveMgr.gdmValidateDimension(jQuery('#gdm-linktype-embed-width').attr('value'), '100%');
 				var height = gdmDriveMgr.gdmValidateDimension(jQuery('#gdm-linktype-embed-height').attr('value'), '400');
 				extraattrs = ' width="'+width+'" height="'+height+'"';
+				extra = link.attr('gdm-data-extra');
+				if (extra != '') {
+					extraattrs += ' extra="'+extra+'"';
+				}
 			}
 			
 			window.send_to_editor('[google-drive-embed url="'+url+'" title="'

@@ -112,3 +112,7 @@ span.gdm-drivefile-title {
 .gdm-linktype-options {
 	margin-left: 96px;
 }
+
+#gdm-linktype-embed-reasons {
+	color: darkblue;
+}

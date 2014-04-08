@@ -3,7 +3,7 @@ Contributors: danlester
 Tags: drive, google, document, google apps, google drive, sso, single-sign-on, auth, intranet, embed
 Requires at least: 3.3
 Tested up to: 3.9
-Stable tag: 1.4
+Stable tag: 2.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -13,13 +13,11 @@ Browse for Google Drive documents and embed directly in your posts/pages. Extend
 
 Google Drive Embedder gives authors easy access to their Google Drive in a popup box, where they can select documents to embed directly into their post or page. Just as easily as picking a photo from the WordPress media gallery.
 
-Documents can be embedded in-line, using Google's read-only interactive viewer for your audience to read them. Documents can also be placed in your site as links to open up editable files (either in the same or a new browser tab).
+Documents can be embedded in-line, using Google's read-only interactive viewer for your audience to read them. Documents can also be placed in your site as links to open up editable files (either in the same or a new browser tab), or downloaded straight to the computer.
 
 You will need to set document sharing settings to ensure your website viewers have access to view your documents (e.g. at least 'anyone with the link can view' to be visible to all visitors).
 
 **This plugin requires that you also install the free (or premium) version of the popular [Google Apps Login](http://wp-glogin.com/wpgoogleappslogin) plugin**
-
-Now with search functionality to find the Drive files you want!
 
 Now displays many file types such as PDF, Word DOC, ZIP etc plus native Google docs (Spreadsheet, Drawing, etc).
 
@@ -29,8 +27,21 @@ Choose from:
 *  Download file link - directly download file to your computer (disabled for native Google doc formats)
 *  Embed document - display most file types inline in your posts or pages (non-Google file types need sharing settings at least 'anyone with the link can view')
 
-Useful for public websites or private intranets (as long as you choose the correct sharing settings for your docs within Google Drive). 
+Useful for public websites or private intranets (all visitors should be able to view files as long as sharing settings are 'anyone with the link can view' or higher in Google Drive). 
 Works on all WordPress installations including multisite networks.
+
+= Premium version and Support =
+
+You can also purchase the premium version of the plugin for some important extra features:
+
+* Embed Folders: simply keep your Google Drive folder up-to-date with your files, and your staff or website visitors will always be able to view a list of the latest documents.
+* Embed Images: serve them directly from Google Drive, respecting your Google sharing settings.
+* Support and updates for one year.
+
+Visit our website for pricing and purchase details: 
+[http://wp-glogin.com/drive/](http://wp-glogin.com/drive/?utm_source=Drive%20ReadmePromo&utm_medium=freemium&utm_campaign=Freemium)
+
+= Requirements =
 
 Google Drive document embedding and one-click login will work for the following domains and user accounts:
 
@@ -76,15 +87,24 @@ settings within Google Drive to 'anyone with the link may view', or higher.
 If that still doesn't work, your file type may not be supported. Please get in touch (send your file or share with 
 us if possible), and we will see if it can be supported - email contact@wp-glogin.com.
 
-= What happened to the old 'Normal file link' and 'Plain file link' options from previous plugin versions? =
+To embed Google Drive Folders or image file types, you will require the premium version of the plugin. You will be 
+notified if that is the case for your selected file.
 
-These two options are now available within the new 'Viewer file link' option. By default, this will give you the old 'Normal' 
-style. You should also see a checkbox for 'Plain style' which will give you the old Plain file link display format.
+= How does the plugin respect Google Drive sharing settings? =
 
-'Download file link' is an option entirely new for version 1.3.
+Google Drive Embedder will show different behavior depending on your document's type and its sharing settings within Google Drive.
 
-The 'Embed document' option is still the same, but now supports extra formats for which embed was disabled in older versions of the 
-plugin.
+Generally, we recommend setting files' Sharing settings to at least 'anyone with the link can view', in order for them to be 
+visible to all visitors. 
+
+This setting is essential for third-party file types such as Word and PDF (otherwise all visitors will see unintelligible content).
+
+You can use lower sharing settings for Google documents (e.g. share only within the organization, or with specific users), but in 
+that case you will need your users to be logged in to a Google account that is authorized to view the content (otherwise, they 
+will be told they do not have permission).
+
+When using 'anyone with the link can view', you must understand that any visitors to your WordPress site will be able to obtain 
+that document's link and potentially open the document outside of your WordPress site.
 
 = I embed a (non-Google) document, but I just see some HTML in the published post =
 
@@ -109,8 +129,10 @@ embed those directly into your site - both native Google formats and other file 
 
 = How can I obtain support for this product? =
 
-Please email [support@wp-glogin.com](mailto:support@wp-glogin.com) with any questions,
+Please email [contact@wp-glogin.com](mailto:contact@wp-glogin.com) with any questions,
 and we will try to help. Specify 'Google Drive Embed' in the subject. 
+
+You may be required to purchase a premium support license to obtain assistance.
 
 We may occasionally be able to respond to support queries posted on the 'Support' forum here on the wordpress.org
 plugin page, but we recommend sending us an email instead if possible.
@@ -131,11 +153,13 @@ any further plugins (which extend Google Apps Login) to individual site administ
 
 Are you sure you have upgraded to the latest version - must be 2.0 or higher?
 
-If not, free users should be able to update with one click from their plugins panel. Premium users should 
-get in touch with us for upgrade steps from their most recent version.
-
 Have you also configured the plugin? Under Settings -> Google Apps Login, you will need to follow the instructions 
 to obtain a Client ID and Client Secret from Google Cloud Console, and enter them into that settings page.
+
+= How can I purchase the premium version? =
+
+You can purchase a license here: 
+[http://wp-glogin.com/drive/](http://wp-glogin.com/drive/?utm_source=Drive%20ReadmeFAQ&utm_medium=freemium&utm_campaign=Freemium)
 
 = What are the system requirements? =
 
@@ -177,6 +201,10 @@ or upload the ZIP file directly in the Plugins section of your Wordpress admin
 1. Follow the instructions to configure the Google Apps Login plugin post-installation
 
 == Changelog ==
+
+= 2.0 =
+
+Provides information about premium upgrade to embed certain new filetypes
 
 = 1.4 =
 
