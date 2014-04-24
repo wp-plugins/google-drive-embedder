@@ -8,34 +8,48 @@ var gdmDriveMgr = {
 	savedWidth : '',
 	savedHeight : '',
 	
+	serviceType : 'drive',
+	
+	setServiceHandler : function(type) {
+		gdmDriveMgr.serviceType = type;
+		gdmDriveMgr.gdmClearSearch(); 
+	},
+	
+	getServiceHandler : function() {
+		return gdmDriveMgr.serviceType == 'drive' ? gdmDriveServiceHandler : gdmCalendarServiceHandler;
+	},
+	
 	makeApiCall : function(thisPageToken) {
 		var self = this;
+		
+		if (!self.getServiceHandler().getAvailable()) {
+			self.gdmStartThinking();
+			jQuery('#gdm-thinking-text').html('<p>Calendars are only available in the premium version <br />'
+					+'(<a href="http://wp-glogin.com/drive/?utm_source=Calendar%20Reason&utm_medium=freemium&utm_campaign=Drive" target="_blank">Find out more</a>)</p>'
+			);
+			return;
+		}
+		
 		var current_search_query = gdmDriveMgr.current_search_query;
-		var params = {maxResults: 8, trashed: false};
+		var params = {maxResults: 8};
 		if (thisPageToken) {
 			params.pageToken = thisPageToken;
 		}
 		if (current_search_query != "") {
 			params.q = "title contains '"+current_search_query+"'";
 		}
-		var restRequest = gapi.client.request({
-			  'path': '/drive/v2/files',
-			  'params': params
-			});
+		var restRequest = self.getServiceHandler().getRequest(params);
 		self.gdmStartThinking();
-		jQuery('#gdm-nextprev-div a').attr('disabled', 'disabled');
 		
 		restRequest.execute(function(resp) {
 			if (resp.error || !resp.items) {
-				self.gdmStartThinking();
-				jQuery('#gdm-thinking-text').html('<p>Please enable <b>Drive API</b> on the APIs page in '
-						+'<a href="http://cloud.google.com/console" target="_blank">Google Cloud Console</a>'
-						+'<br></br> (or reload this page and try again if Drive API is already enabled)<br></br>'
-						+'</p>'
-						+'<p>Error message from Google: <i>'+self.escapeHTML(resp.error.message)+'</i></p>'
-				);
+				self.displayError(resp.error);
 			}
 			else {
+				if (!gdmDriveMgr.getServiceHandler().isCorrectType(resp)) {
+					return;
+				}
+				
 				self.gdmStopThinking();
 				jQuery('#gdm-nextprev-div a').removeAttr('disabled');
 	
@@ -94,35 +108,56 @@ var gdmDriveMgr = {
 		});
 	},
 	
+	displayError : function(error) {
+		gdmDriveMgr.gdmStartThinking();
+		
+		if (error.errors && error.errors.length > 0) {
+			var serviceName = gdmDriveMgr.serviceType.charAt(0).toUpperCase() + gdmDriveMgr.serviceType.slice(1);
+			if (error.errors[0].reason && (error.errors[0].reason == 'accessNotConfigured' || error.errors[0].reason == 'insufficientPermissions')) {
+				jQuery('#gdm-thinking-text').html('<p>Please enable <b>'+serviceName+' API</b> on the APIs page in '
+						+'<a href="http://cloud.google.com/console" target="_blank">Google Cloud Console</a>'
+						+'<br></br> (or reload this page and try again if '+serviceName+' API is already enabled)<br></br>'
+						+'</p>'
+						+'<p>Error message from Google: <i>'+gdmDriveMgr.escapeHTML(error.errors[0].message)+'</i></p>'
+				);
+			}
+			else if (error.errors[0].reason && (error.errors[0].reason == 'authError' || error.errors[0].reason == 'required')) {
+				// Do auth again
+				jQuery('#gdm-thinking-text').html('<p>There was a problem accessing <b>'+serviceName+' API</b>'
+						+'<br></br>Please <a href="#" onclick="gdmDriveMgr.handleAuthClick2(); return false">click here</a> to authenticate again<br></br>'
+						+'</p>'
+						+'<p>Error message from Google: <i>'+gdmDriveMgr.escapeHTML(error.errors[0].message)+'</i></p>'
+				);				
+			}
+			else {
+				jQuery('#gdm-thinking-text').html('<p>There was a problem accessing <b>'+serviceName+' API</b> '
+						+'<br></br>Reload this page and try again - please <a href="mailto:contact@wp-glogin.com">email us</a> if it persists<br></br>'
+						+'</p>'
+						+'<p>Error message from Google: <i>'+gdmDriveMgr.escapeHTML(error.errors[0].message)+'</i></p>'
+				);
+			}
+		}
+	},
+	
 	gdmMakeListItem : function(drivefile) {
-		var links = gdmDriveFileHandler.getUrlsAndReasons(drivefile);
+		var links = gdmDriveMgr.getServiceHandler().getUrlsAndReasons(drivefile);
 	    
 		var attrs = 
 			 { 'href': links.viewer.url, 'class': "gdm-file-link",
-			  'gdm-data-embedurl': links.embed.url,
-			  'gdm-data-downloadurl': links.download.url
+			  'gdm-data-id': links.id
 			  };
 		
-		if (links.embed.reason) {
-			attrs['gdm-data-embedreason'] = links.embed.reason;
-		}
-		if (links.extra) {
-			attrs['gdm-data-extra'] = links.extra;
-		}
-		if (links.width) {
-			attrs['gdm-data-width'] = links.width;
-		}
-		if (links.height) {
-			attrs['gdm-data-height'] = links.height;
-		}
+		gdmDriveMgr.storeFileLinks(links.id, links);
 			  
 	    var htmlItem = jQuery('<div class="gdm-drivefile-div" />');
 	
 	    var iconSpan = jQuery('<span class="gdm-drivefile-icon" />')
-	    		.append(jQuery('<img src="'+drivefile.iconLink+'" width="16" height="16" />'));
+	    		.append(jQuery( links.icon.url ? '<img src="'+links.icon.url+'" width="16" height="16" '
+	    							+ (links.icon.color ? ' style="background-color: '+links.icon.color+'" ' : '') +' />' 
+	    						 : '<span style="width: 16px; height: 16px; background-color: '+links.icon.color+'" />' ));
 	    var titleSpan = jQuery('<span class="gdm-drivefile-title" />')
 	    		.append(jQuery('<a />', attrs )
-	    		.text(drivefile.title));
+	    		.text(links.title));
 	    
 	    htmlItem.append(iconSpan);
 	    htmlItem.append(titleSpan);
@@ -143,12 +178,12 @@ var gdmDriveMgr = {
 			self.addClass('gdm-selected');
 			
 			var anchor = self.find('span.gdm-drivefile-title a');
-			var embedurl = anchor.attr('gdm-data-embedurl');
-			var downloadurl = anchor.attr('gdm-data-downloadurl');
-			var embedreason = anchor.attr('gdm-data-embedreason');
-			var width = anchor.attr('gdm-data-width');
-			var height = anchor.attr('gdm-data-height');
-			gdmDriveMgr.gdmSomethingSelected(downloadurl != '', embedurl != '', embedreason, width, height);
+			
+			var id = anchor.attr('gdm-data-id');
+			
+			var links = gdmDriveMgr.getFileLinks(id);
+
+			gdmDriveMgr.gdmSomethingSelected(links);
 		}
 		
 		event.preventDefault();
@@ -156,56 +191,96 @@ var gdmDriveMgr = {
 	},
 	
 	gdmNothingSelected : function() {
+		gdmDriveMgr.hideMoreOptions();
 		jQuery('#gdm-insert-drivefile').attr('disabled', 'disabled');
 		var baseLinkTypes = jQuery('#gdm-linktypes-div');
 		baseLinkTypes.find('input, label').attr('disabled', 'disabled');
+		
+		jQuery('#gdm-linktype-normal-options').hide();
+		jQuery('#gdm-linktype-download-options').hide();
+		jQuery('#gdm-linktype-download-reasons').hide();
+		jQuery('#gdm-linktype-embed-options').hide();
 		jQuery('#gdm-linktype-embed-reasons').hide();
 	},
 	
-	gdmSomethingSelected : function(canDownload, canEmbed, embedreason, width, height) {
-		jQuery('#gdm-insert-drivefile').removeAttr('disabled');
+	gdmSomethingSelected : function(links) {
+		//jQuery('#gdm-insert-drivefile').removeAttr('disabled');
 		var baseLinkTypes = jQuery('#gdm-linktypes-div');
 		baseLinkTypes.find('input, label').removeAttr('disabled');
-	
-		if (!canDownload) {
-			baseLinkTypes.find('.gdm-downloadable-only').find('input, label').attr('disabled', 'disabled');
-			if (jQuery('#gdm-linktype-download').prop("checked")==true) {
-				jQuery('#gdm-linktype-normal').prop("checked", true);
-				jQuery('#gdm-linktype-normal-options').show();
-				jQuery('#gdm-linktype-download-options').hide();
-			}
-		}
 		
-		if (!canEmbed) {
-			// baseLinkTypes minus embed ones
-			baseLinkTypes.find('.gdm-embeddable-only').find('input, label').attr('disabled', 'disabled');
-			if (jQuery('#gdm-linktype-embed').prop("checked")==true) {
-				jQuery('#gdm-linktype-normal').prop("checked", true);
-				jQuery('#gdm-linktype-normal-options').show();
-				jQuery('#gdm-linktype-embed-options').hide();
-			}
-			jQuery('#gdm-linktype-embed-reasons').show();
-			jQuery('#gdm-linktype-embed-reasons').html(' - '+gdmDriveFileHandler.getReasonText(embedreason));
+		gdmDriveMgr.hideMoreOptions();
+		if (links.extra == 'calendar') {
+			jQuery('#gdm-linktype-normal-more').show();
 		}
 		else {
-			jQuery('#gdm-linktype-embed-reasons').hide();
-			if (width) {
+			jQuery('#gdm-linktype-normal-more').hide();
+		}
+
+		jQuery('#gdm-linktype-normal-options').hide();
+		
+		jQuery('#gdm-linktype-download-options').hide();
+		jQuery('#gdm-linktype-download-reasons').hide();
+	
+		if (!links.download.url && !links.download.exports) {
+			jQuery('#gdm-linktype-download').attr('gdm-available', 'true');
+			
+			jQuery('#gdm-linktype-download-reasons').html(' - '+gdmDriveMgr.getServiceHandler().getReasonText(links.download.reason));
+		}
+		else {
+			jQuery('#gdm-linktype-download').attr('gdm-available', 'false');
+						
+			var fileTypesSelect = jQuery('#gdm-linktype-download-type');
+			// Is it a download or an export
+			if (links.download.url || !links.download.exports) {
+				fileTypesSelect.hide();
+			}
+			else {
+				fileTypesSelect.empty();
+				for (prop in links.download.exports) {
+					fileTypesSelect.append(jQuery('<option>', { value : links.download.exports[prop] }).text(prop));
+				}
+				fileTypesSelect.show();
+			}
+		}
+
+		jQuery('#gdm-linktype-embed-options').hide();
+		jQuery('#gdm-linktype-embed-reasons').hide();
+	
+		if (!links.embed.url) {
+			jQuery('#gdm-linktype-embed').attr('gdm-available', 'true');
+			
+			jQuery('#gdm-linktype-embed-reasons').html(' - '+gdmDriveMgr.getServiceHandler().getReasonText(links.embed.reason));
+		}
+		else {
+			jQuery('#gdm-linktype-embed').attr('gdm-available', 'false');
+						
+			if (links.extra == 'calendar') {
+				jQuery('#gdm-linktype-embed-more').show();
+			}
+			else {
+				jQuery('#gdm-linktype-embed-more').hide();
+			}
+			
+			if (links.width) {
 				gdmDriveMgr.savedWidth = jQuery('#gdm-linktype-embed-width').attr('value');
-				jQuery('#gdm-linktype-embed-width').attr('value', width);
+				jQuery('#gdm-linktype-embed-width').attr('value', links.width);
 			}
 			else if (gdmDriveMgr.savedWidth) {
 				jQuery('#gdm-linktype-embed-width').attr('value', gdmDriveMgr.savedWidth);
 			}
 			
-			if (height) {
+			if (links.height) {
 				gdmDriveMgr.savedHeight = jQuery('#gdm-linktype-embed-height').attr('value');
-				jQuery('#gdm-linktype-embed-height').attr('value', height);
+				jQuery('#gdm-linktype-embed-height').attr('value', links.height);
 			}
 			else if (gdmDriveMgr.savedHeight) {
 				jQuery('#gdm-linktype-embed-height').attr('value', gdmDriveMgr.savedHeight);
 			}
 			// set width and height
 		}
+		
+		jQuery('.gdm-linktypes-span input:checked').change();
+
 	},
 	
 	gdmInsertDriveFile : function() {
@@ -216,6 +291,9 @@ var gdmDriveMgr = {
 			var link = selDiv.find('span.gdm-drivefile-title a');
 			var url = link.attr('href');
 			
+			var id = link.attr('gdm-data-id');
+			var links = gdmDriveMgr.getFileLinks(id);
+			
 			var icon = selDiv.find('span.gdm-drivefile-icon img');
 			var extraattrs = '';
 			
@@ -225,29 +303,55 @@ var gdmDriveMgr = {
 				if (jQuery('#gdm-linktype-normal-window').prop("checked")) {
 					extraattrs = ' newwindow="yes"';
 				}
-				if (jQuery('#gdm-linktype-normal-plain').prop("checked")) {
+				if (!jQuery('#gdm-linktype-normal-plain').prop("checked")) {
 					extraattrs += ' plain="yes"';
 				}
 			}
 			else if (jQuery('#gdm-linktype-download').prop("checked")==true) {
 				linkStyle = 'download';
-				url = link.attr('gdm-data-downloadurl');
-				if (jQuery('#gdm-linktype-download-plain').prop("checked")) {
+				url = links.download.url;
+				
+				if (!url && links.download && links.download.exports) {
+					url = jQuery('#gdm-linktype-download-type').val();
+				}
+				
+				if (!jQuery('#gdm-linktype-download-plain').prop("checked")) {
 					extraattrs += ' plain="yes"';
 				}
 			}
 			else if (jQuery('#gdm-linktype-embed').prop("checked")==true) {
 				linkStyle = 'embed';
-				url = link.attr('gdm-data-embedurl');
+				url = links.embed.url;
 				var width = gdmDriveMgr.gdmValidateDimension(jQuery('#gdm-linktype-embed-width').attr('value'), '100%');
 				var height = gdmDriveMgr.gdmValidateDimension(jQuery('#gdm-linktype-embed-height').attr('value'), '400');
 				extraattrs = ' width="'+width+'" height="'+height+'"';
-				extra = link.attr('gdm-data-extra');
-				if (extra != '') {
-					extraattrs += ' extra="'+extra+'"';
+				if (links.extra) {
+					extraattrs += ' extra="'+links.extra+'"';
 				}
 			}
 			
+			// Calendar more options
+			if ((linkStyle == 'normal' || linkStyle == 'embed') && links.extra && links.extra == 'calendar') {
+				var extraparams = {};
+				jQuery('.gdm-more-boolean').each(function(index,elt) {
+					var jelt = jQuery(elt);
+					if (!jelt.prop("checked")) {
+						var optname = jelt.attr('name');
+						extraparams[optname] = "0";
+					}
+				});
+				extraparams['wkst'] = jQuery('#gdm-more-wkst').val();
+				extraparams['mode'] = jQuery('input:radio[name=gdm-more-mode]:checked').val();
+				var caltitle = jQuery('#gdm-more-title').val();
+				if (caltitle != '') {
+					extraparams['title'] = encodeURIComponent(caltitle);
+				}
+				for (param in extraparams) {
+					url += "&" + param + "=" + extraparams[param];
+				}
+			}
+			
+			// Send to editor
 			window.send_to_editor('[google-drive-embed url="'+url+'" title="'
 					+gdmDriveMgr.stripQuots(link.text())+'"'
 					+' icon="'+icon.attr('src')+'"'
@@ -264,36 +368,40 @@ var gdmDriveMgr = {
 	},
 	
 	gdmNormalCheckChange : function() {
-		if (jQuery(this).attr('value')) {
-			jQuery('#gdm-linktype-normal-options').show();
-			jQuery('#gdm-linktype-download-options').hide();
-			jQuery('#gdm-linktype-embed-options').hide();
-		}
-		else {
-			jQuery('#gdm-linktype-normal-options').hide();
-		}
+		jQuery('#gdm-insert-drivefile').removeAttr('disabled');
+		jQuery('#gdm-linktype-normal-options').show();
+		jQuery('#gdm-linktype-download-options').hide();
+		jQuery('#gdm-linktype-download-reasons').hide();
+		jQuery('#gdm-linktype-embed-options').hide();
+		jQuery('#gdm-linktype-embed-reasons').hide();
 	},
 	
 	gdmDownloadCheckChange : function() {
-		if (jQuery(this).attr('value')) {
+		// Assume it is now checked
+		if (jQuery('#gdm-linktype-download').attr('gdm-available') == 'true') {
+			jQuery('#gdm-linktype-download-reasons').show();
+			jQuery('#gdm-insert-drivefile').attr('disabled', 'disabled');
+		} else {
 			jQuery('#gdm-linktype-download-options').show();
-			jQuery('#gdm-linktype-normal-options').hide();
-			jQuery('#gdm-linktype-embed-options').hide();
+			jQuery('#gdm-insert-drivefile').removeAttr('disabled');
 		}
-		else {
-			jQuery('#gdm-linktype-download-options').hide();
-		}
+		jQuery('#gdm-linktype-normal-options').hide();
+		jQuery('#gdm-linktype-embed-options').hide();
+		jQuery('#gdm-linktype-embed-reasons').hide();
+		gdmDriveMgr.hideMoreOptions();
 	},
 	
 	gdmEmbedCheckChange : function() {
-		if (jQuery(this).attr('value')) {
+		if (jQuery('#gdm-linktype-embed').attr('gdm-available') == 'true') {
+			jQuery('#gdm-linktype-embed-reasons').show();
+			jQuery('#gdm-insert-drivefile').attr('disabled', 'disabled');
+		} else {
 			jQuery('#gdm-linktype-embed-options').show();
-			jQuery('#gdm-linktype-download-options').hide();
-			jQuery('#gdm-linktype-normal-options').hide();
+			jQuery('#gdm-insert-drivefile').removeAttr('disabled');
 		}
-		else {
-			jQuery('#gdm-linktype-embed-options').hide();
-		}
+		jQuery('#gdm-linktype-normal-options').hide();
+		jQuery('#gdm-linktype-download-options').hide();
+		jQuery('#gdm-linktype-download-reasons').hide();
 	},
 	
 	gdmSearchKeyPress : function(e) {
@@ -310,13 +418,18 @@ var gdmDriveMgr = {
 	},
 	
 	gdmClearSearch : function() {
+		gdmDriveMgr.hideMoreOptions();
 		jQuery('#gdm-search-box').val("");
+		jQuery('#gdm-search-area').css('visibility', gdmDriveMgr.getServiceHandler().getAllowSearch() ? 'visible' : 'hidden' );
 		gdmDriveMgr.setSearchQuery("");
 	},
 	
 	gdmStartThinking : function() {
+		jQuery('#gdm-nextprev-div a').attr('disabled', 'disabled').hide();
+		jQuery('#gdm-thinking-text').html('Loading...');
 		jQuery('.gdm-browsebox').hide();
 		jQuery('#gdm-thinking').show();
+		gdmDriveMgr.gdmNothingSelected();
 	},
 	
 	gdmStopThinking : function() {
@@ -342,6 +455,32 @@ var gdmDriveMgr = {
 		return String(str).replace(/["]/g, "'");
 	},
 	
+	_linksStore : {},
+	
+	storeFileLinks : function(id, links) {
+		gdmDriveMgr._linksStore[id] = links;
+	},
+	
+	getFileLinks : function(id) {
+		return gdmDriveMgr._linksStore[id];
+	},
+	
+	showMoreOptions : function() {
+		if (!jQuery('#gdm-more-options').is(':visible')) {
+			jQuery('#gdm-more-options').show();
+			gdmThickDims();
+		}
+	},
+
+	hideMoreOptions : function() {
+		if (jQuery('#gdm-more-options').is(':visible')) {
+			jQuery('#gdm-more-options').hide();
+			gdmThickDims();
+		}		
+	},
+
+	// Auth stuff
+	
 	handleFirstAuth : function(authResult) {
 		  if (authResult && !authResult.error) {
 			 jQuery('#gdm-search-box').removeAttr('disabled');
@@ -355,11 +494,13 @@ var gdmDriveMgr = {
 	handleAuthClick2 : function(event) {
 		  jQuery('#gdm-authbtn').hide();
 		  jQuery('#gdm-filelist').hide();
-		  jQuery('#gdm-thinking').show();
+		  gdmDriveMgr.gdmStartThinking();
 		  
 		  gdmDriveMgr.doAuth(false, gdmDriveMgr.handleSecondAuth);
 	
-		  event.preventDefault();
+		  if (event) {
+			  event.preventDefault();
+		  }
 		  return false;
 	},
 	
@@ -376,7 +517,7 @@ var gdmDriveMgr = {
 	},
 	
 	doAuth : function(immediate, handler) {
-		  var clientid = jQuery('#gdm-clientid').val();
+		  var clientid = gdm_trans.clientid;
 		  
 		  if (clientid=='') {
 			  jQuery('#gdm-thinking-text').html('<p>Please install and configure '
@@ -386,10 +527,11 @@ var gdmDriveMgr = {
 			  );
 		  }
 		  else {
-			  var useremail = jQuery('#gdm-useremail').val();
-			  var scopes = 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.file';
+			  var useremail = gdm_trans.useremail;
 			  
-			  gapi.auth.authorize({client_id: clientid, scope: scopes, immediate: immediate, login_hint: useremail, 
+			  //'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.file';
+			  
+			  gapi.auth.authorize({client_id: clientid, scope: gdm_trans.scopes, immediate: immediate, login_hint: useremail, 
 					  				   include_granted_scopes: true}, handler);
 		  }
 	},
@@ -415,6 +557,28 @@ gdmHandleGoogleJsClientLoad = function() {
 	}
 };
 
+gdmThickDims = function() {
+	var tbWidth = 640, tbHeight = 534+50;
+	var tbWindow = jQuery('#TB_window'), H = jQuery(window).height(), W = jQuery(window).width(), w, h;
+
+	var moreBox = jQuery('#gdm-more-options');
+	if (moreBox.is(':visible')) {
+		tbHeight += moreBox.height();
+	}
+	
+	w = (tbWidth && tbWidth < W - 90) ? tbWidth : W - 90;
+	h = (tbHeight && tbHeight < H - 60) ? tbHeight : H - 60;
+
+	if ( tbWindow.size() ) {
+		tbWindow.width(w).height(h);
+		jQuery('#TB_ajaxContent').width(w).height(h - 27).css('padding', '0');
+		tbWindow.css({'margin-left': '-' + parseInt((w / 2),10) + 'px'});
+		/* if ( typeof document.body.style.maxWidth !== 'undefined' ) {
+			tbWindow.css({'top':'30px','margin-top':'0'});
+		}*/
+	}
+};
+
 
 jQuery(document).ready(function () {
     jQuery('#gdm-start-browse2').click( gdmDriveMgr.handleAuthClick2 );
@@ -433,37 +597,36 @@ jQuery(document).ready(function () {
     
     jQuery('#gdm-search-box').on('keypress', gdmDriveMgr.gdmSearchKeyPress );
     
-	thickDims = function() {
-		var tbWidth = 640, tbHeight = 534;
-		var tbWindow = jQuery('#TB_window'), H = jQuery(window).height(), W = jQuery(window).width(), w, h;
 
-		w = (tbWidth && tbWidth < W - 90) ? tbWidth : W - 90;
-		h = (tbHeight && tbHeight < H - 60) ? tbHeight : H - 60;
 
-		if ( tbWindow.size() ) {
-			tbWindow.width(w).height(h);
-			jQuery('#TB_ajaxContent').width(w).height(h - 27);
-			tbWindow.css({'margin-left': '-' + parseInt((w / 2),10) + 'px'});
-			/* if ( typeof document.body.style.maxWidth !== 'undefined' ) {
-				tbWindow.css({'top':'30px','margin-top':'0'});
-			}*/
-		}
-	};
-
-	jQuery(window).resize( function() { thickDims(); } );
+	jQuery(window).resize( function() { gdmThickDims(); } );
 	
 	jQuery('#gdm-thickbox-trigger').click( function() { 
 			window.setTimeout( function() { 
-					thickDims(); 
+				gdmThickDims(); 
 			}, 1); 
 		} );
-	
 	
 	gdmDriveMgr.gdmDocReady = true;
 	if (gdmDriveMgr.gdmJsClientLoaded) {
 		// Will have avoided actual auth the first time round, since doc not ready
 		gdmHandleGoogleJsClientLoad();
 	}
+	
+	// Extra options
+	jQuery('.gdm-linktype-more').click(function() {
+		gdmDriveMgr.showMoreOptions();
+	});
+	
+	// Enable tabs
+	jQuery('#gdm-tabs').find('a').click(function() {
+		jQuery('#gdm-tabs').find('a').removeClass('nav-tab-active');
+		jQuery('.gdmtab').removeClass('active');
+		var id = jQuery(this).attr('id').replace('-tab','');
+		//jQuery('#' + id + '-section').addClass('active');
+		jQuery(this).addClass('nav-tab-active');
+		gdmDriveMgr.setServiceHandler(id);
+	});
 	
 });
 
