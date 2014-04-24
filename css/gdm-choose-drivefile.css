@@ -1,0 +1,138 @@
+
+.gdm-wrap {
+	 font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	 margin-top: 16px;
+	 padding: 0px 16px;
+}
+
+#gdm-search-area {
+	width: 600px;
+	margin-bottom: 4px;	
+}
+
+#gdm-search-box {
+	width: 600px;
+	background: url(../images/search.png) no-repeat 4px center;
+	padding-left: 24px;
+}
+
+div.gdm-browsebox {
+	width: 600px;
+	height: 240px;
+	border: 1px black solid;
+}
+
+div.gdm-drivefile-div {
+	width: 600px;
+	height: 30px;
+}
+
+div.gdm-nofiles-div {
+	width: 600px;
+	height: 30px;
+	padding-left: 4px;
+}
+
+#gdm-nextprev-div {
+	width: 600px;
+	height: 18px;
+}
+
+#gdm-nextprev-div a#gdm-prev-link {
+}
+
+#gdm-nextprev-div a#gdm-next-link {
+	float: right;
+}
+
+#gdm-thinking div {
+	text-align: center;
+	line-height: 250px;
+	margin: auto;
+}
+
+#gdm-thinking-text p {
+	line-height: 20px;
+}
+
+#gdm-authbtn div {
+	text-align: center;
+	line-height: 250px;
+	margin: auto;
+}
+
+.gdm-selected {
+	background: yellow;
+}
+
+div.gdm-drivefile-div span {
+	padding: 6px;
+	height: 30px;
+	line-height: 30px;
+}
+
+.gdm-drivefile-icon {
+	width: 60px;
+	padding-left: 12px;
+	padding-right: 12px;
+}
+
+.gdm-drivefile-icon img {
+	vertical-align: middle;
+	margin-bottom: 4px;
+}
+
+span.gdm-drivefile-title {
+	width: 300px;	
+}
+
+#gdm-linktypes-div {
+	margin-top: 24px;
+	margin-bottom: 18px;
+}
+
+#gdm-linktypes-div div {
+	height: 28px;
+}
+
+.gdm-linktypes-span {
+	height: 12px;
+	vertical-align: top;
+}
+
+.gdm-group {
+	clear: both;
+	margin-bottom: 12px;
+}
+
+.gdm-group div {
+	margin-top: 6px;
+	margin-bottom: 6px;
+}
+
+.gdm-linktype-options {
+	margin-left: 96px;
+}
+
+#gdm-linktype-download-reasons {
+	color: darkblue;
+}
+
+#gdm-linktype-embed-reasons {
+	color: darkblue;
+}
+
+#gdm-more-options {
+	width: 600px;
+}
+
+table.gdm-more-table {
+	width: 100%;
+	background-color: #CCCCCC;
+	padding-left: 5px;
+}
+
+table.gdm-more-table tr td {
+	padding: 5px;
+	vertical-align: top;
+}
