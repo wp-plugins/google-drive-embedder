@@ -34,6 +34,8 @@ Works on all WordPress installations including multisite networks.
 
 You can also purchase the premium version of the plugin for some important extra features:
 
+* Google Calendars: pick from your Google Calendars and provide download links to ICAL or XML, or embed them directly in your site.
+* Google Docs export: provide links to downloadable versions of Google Docs, e.g. Spreadsheets exported as PDF or Excel.
 * Embed Folders: simply keep your Google Drive folder up-to-date with your files, and your staff or website visitors will always be able to view a list of the latest documents.
 * Embed Images: serve them directly from Google Drive, respecting your Google sharing settings.
 * Support and updates for one year.
@@ -199,6 +201,78 @@ or upload the ZIP file directly in the Plugins section of your Wordpress admin
 1. For Google Apps Login plugin: Upload `googleappslogin` directory and contents to the `/wp-content/plugins/` directory, 
 or upload the ZIP file directly in the Plugins section of your Wordpress admin
 1. Follow the instructions to configure the Google Apps Login plugin post-installation
+
+== Shortcodes ==
+
+Attribute options for [google-drive-embed ...] shortcode
+
+**Important: please note that you cannot normally switch the style attributes around while keeping the url the same.
+Most often, Google will require a different URL for the new link type, which can be obtained by opening the Drive Embedder dialog
+box again.**
+
+= url (required) =
+
+The url pointing to the Drive file or resource. Note that most Google Drive files will required a different URL 
+depending on the style and other factors below.
+
+= style (defaults to 'normal') =
+
+Values: normal | download | embed
+
+= newwindow (defaults to 'no') =
+
+Values: yes | no
+
+Only relevant when style='normal'
+
+= width/height =
+
+Dimensions of the iframe to be ebedded.
+Only relevant when style='embed'.
+Specified in pixels or as a percentage, e.g. '400' or '100%'.
+
+= plain (defaults to 'no') =
+
+Values: yes | no
+
+When set to 'yes', will NOT display the icon specified in "icon" below.
+Only relevant when style='normal' or 'download'.
+
+= icon =
+
+URL to an icon file to display next to the link.
+Only relevant when style='normal' or 'download'; and when plain not set to "yes".
+
+= extra =
+
+Values: folder | image | calendar
+
+Used by the premium plugin only for these special file types.
+
+= title =
+
+Text to display within the link to a 'normal' or 'download' file.
+
+
+= CSS =
+
+You can use custom CSS styles to affect some of the final results.
+
+Example html code for style='download' or 'normal':
+
+&lt;p&gt;&lt;span class="gdm-drivefile-embed"&gt;&lt;img src="$icon" width="16" height="16" /&gt; &lt;a href="$url"&gt;$title&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
+
+Example html code for style='download' or 'normal', when plain='yes':
+
+&lt;a href="$url"&gt;$title&lt;/a&gt;
+
+Example html code for style='embed':
+
+&lt;iframe width='$width' height='$height' frameborder='0' scrolling='no' src='$url'&gt;&lt;/iframe&gt;
+
+
+Please get in touch if you would like to make suggestions for further CSS configurability - email contact@wp-glogin.com.
+
 
 == Changelog ==
 
