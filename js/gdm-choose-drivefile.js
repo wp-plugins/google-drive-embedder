@@ -24,8 +24,8 @@ var gdmDriveMgr = {
 		
 		if (!self.getServiceHandler().getAvailable()) {
 			self.gdmStartThinking();
-			jQuery('#gdm-thinking-text').html('<p>Calendars are only available in the premium version <br />'
-					+'(<a href="http://wp-glogin.com/drive/?utm_source=Calendar%20Reason&utm_medium=freemium&utm_campaign=Drive" target="_blank">Find out more</a>)</p>'
+			jQuery('#gdm-thinking-text').html('<p>Available in the premium version of Google Drive Embedder: <br/> Embed Google Calendars as well as Drive files<br />'
+					+'<a href="http://wp-glogin.com/drive/?utm_source=Calendar%20Reason&utm_medium=freemium&utm_campaign=Drive" target="_blank">Find out more</a></p>'
 			);
 			return;
 		}
