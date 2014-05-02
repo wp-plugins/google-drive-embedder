@@ -60,7 +60,7 @@ class core_google_drive_embedder {
 		<div id="gdm-choose-drivefile" style="display: none;">
 			<h3 id="gdm-tabs" class="nav-tab-wrapper">
 				<a href="#drive" id="drive-tab" class="nav-tab nav-tab-active">Drive</a>
-				<a href="#calendar" id="calendar-tab" class="nav-tab">Calendar</a>
+				<a href="#calendar" id="calendar-tab" class="nav-tab"><?php echo $this->get_extra_js_name() == 'basic' ? '+' : 'Calendar'; ?></a>
 			</h3>
 			
 			<div class="wrap gdm-wrap">
