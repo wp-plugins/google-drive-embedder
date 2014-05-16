@@ -51,6 +51,12 @@ var gdmDriveServiceHandler = {
 			}
 		}
 		
+		// Video needs special attention
+		if (drivefile.mimeType.match(/^video\//) && drivefile.alternateLink) {
+			links.embed.url = '';
+			links.embed.reason = "PREMIUM";
+		}
+		
 		if (links.download.url == '' && drivefile.exportLinks) {
 			links.download.reason = "PREMIUM";
 		}
@@ -65,7 +71,7 @@ var gdmDriveServiceHandler = {
 				break;
 				
 			case 'PREMIUM':
-				return 'Requires premium version for this file type '
+				return 'Please purchase premium version to enable this file type '
 						+'(<a href="http://wp-glogin.com/drive/?utm_source=Embed%20Reason&utm_medium=freemium&utm_campaign=Drive" '
 						+'target="_blank">Find out more</a>)';
 				break;
