@@ -409,7 +409,7 @@ class core_google_drive_embedder {
 	        	<p>You will need to install and configure 
 	        		<a href="http://wp-glogin.com/?utm_source=Admin%20Configmsg&utm_medium=freemium&utm_campaign=Drive" 
 	        		target="_blank">Google Apps Login</a>  
-	        		plugin in order for Google Drive Embedder to work. (Requires version 2.0+ of Free or Premium)
+	        		plugin in order for Google Drive Embedder to work. (Requires v2.0+ of Free or Professional)
 	        	</p>
 	    	</div> <?php
 		}
@@ -421,7 +421,7 @@ class core_google_drive_embedder {
 		add_shortcode( 'google-drive-embed', Array($this, 'gdm_shortcode_display_drivefile') );
 		
 		if (is_admin()) {
-			add_action( 'admin_init', array($this, 'gdm_admin_init') );
+			add_action( 'admin_init', array($this, 'gdm_admin_init'), 5, 0 );
 			
 			add_action(is_multisite() ? 'network_admin_menu' : 'admin_menu', array($this, 'gdm_admin_menu'));
 			

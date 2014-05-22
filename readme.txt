@@ -79,6 +79,21 @@ of mind that only authorized employees have access to the organizations's websit
 
 == Frequently Asked Questions ==
 
+= How can I obtain support for this product? =
+
+Full support is available if you purchase the premium license from the author via:
+[https://wp-glogin.com/drive/](https://wp-glogin.com/drive/?utm_source=Drive%20Readme%20Premium&utm_medium=freemium&utm_campaign=Freemium)
+
+The premium plugin also supports more file types (such as embedded Videos and Drive Folders) and allows you to 
+browse your Google Calendars to embed in your posts/pages.
+
+Please feel free to email [support@wp-glogin.com](mailto:support@wp-glogin.com) with any questions (specifying Drive in the subject),
+as we may be able to help, but you may be required to purchase a support license if the problem
+is specific to your installation or requirements.
+
+We may occasionally be able to respond to support queries posted on the 'Support' forum here on the wordpress.org
+plugin page, but we recommend sending us an email instead if possible.
+
 = Why is the option for Viewer / Download / Embed disabled for some files? =
 
 Download isn't normally enabled for native Google file types.
@@ -128,16 +143,6 @@ Google Doc Embedder only allows you to embed other files such as PDF, Word etc i
 with Google, other than the fact it uses an online Google service to render documents.
 By contrast, our plugin (Google Drive Embedder) allows you to browse your Google Drive files and easily 
 embed those directly into your site - both native Google formats and other file types PDF, Word, ZIP etc.
-
-= How can I obtain support for this product? =
-
-Please email [contact@wp-glogin.com](mailto:contact@wp-glogin.com) with any questions,
-and we will try to help. Specify 'Google Drive Embed' in the subject. 
-
-You may be required to purchase a premium support license to obtain assistance.
-
-We may occasionally be able to respond to support queries posted on the 'Support' forum here on the wordpress.org
-plugin page, but we recommend sending us an email instead if possible.
 
 = Why do I also need to install the Google Apps Login plugin? =
 
