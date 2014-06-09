@@ -35,7 +35,7 @@ var gdmDriveServiceHandler = {
 			links.embed.url = drivefile.embedLink;
 		}
 		else {
-			if (drivefile.mimeType == 'application/vnd.google-apps.folder' || drivefile.mimeType.match(/^image\//)) {
+			if (drivefile.mimeType == 'application/vnd.google-apps.folder' || drivefile.mimeType == 'application/vnd.google-apps.form' || drivefile.mimeType.match(/^image\//)) {
 				links.embed.reason = 'PREMIUM';
 				links.download.reason = 'FOLDERDOWNLOAD';
 			}
@@ -77,7 +77,7 @@ var gdmDriveServiceHandler = {
 				break;
 				
 			case 'FOLDERDOWNLOAD':
-				return 'Not possible to download folders';
+				return 'Not possible to download this type';
 				break;
 				
 			default:
