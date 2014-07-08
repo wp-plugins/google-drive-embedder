@@ -245,6 +245,7 @@ var gdmDriveMgr = {
 
 		jQuery('#gdm-linktype-embed-options').hide();
 		jQuery('#gdm-linktype-embed-reasons').hide();
+		jQuery('.gdm-linktype-embed-native').hide();
 	
 		if (!links.embed.url) {
 			jQuery('#gdm-linktype-embed').attr('gdm-available', 'true');
@@ -277,6 +278,10 @@ var gdmDriveMgr = {
 				jQuery('#gdm-linktype-embed-height').attr('value', gdmDriveMgr.savedHeight);
 			}
 			// set width and height
+			
+			if (links.embed.native_url) {
+				jQuery('.gdm-linktype-embed-native').show();
+			}
 		}
 		
 		jQuery('.gdm-linktypes-span input:checked').change();
@@ -322,6 +327,9 @@ var gdmDriveMgr = {
 			else if (jQuery('#gdm-linktype-embed').prop("checked")==true) {
 				linkStyle = 'embed';
 				url = links.embed.url;
+				if (links.embed.native_url && jQuery('#gdm-linktype-embed-native').prop("checked")==true) {
+					url = links.embed.native_url;
+				}
 				var width = gdmDriveMgr.gdmValidateDimension(jQuery('#gdm-linktype-embed-width').attr('value'), '100%');
 				var height = gdmDriveMgr.gdmValidateDimension(jQuery('#gdm-linktype-embed-height').attr('value'), '400');
 				extraattrs = ' width="'+width+'" height="'+height+'"';

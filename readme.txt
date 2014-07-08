@@ -134,8 +134,23 @@ Specifically, you see something starting:
 Most likely, you need to increase sharing settings for the file. In your Google Drive, find the file and click 
 'Share'. Click 'Change', and then on 'Anyone with the link can view'. Click 'Done'.
 
+You also need to make sure you have not chosen to 'Prevent viewers from downloading'. To check this, find the file in 
+your Google Drive list, and see if 'Allow viewers to download' is available from the right-click menu. If so, click it 
+to turn it off!
+
 If you reload your published page or post in WordPress, it should now display properly, or at least give a message
 saying that the document type is unsupported. Please get in touch if not!
+
+= In the Add Google File dialog box, I just get the Google Error "Forbidden". Even though I promise I followed the instructions, including enabling Drive API! =
+
+Google Apps' user and permissions systems are complex, and there are many ways you could forbid your users from using the Drive API.
+
+You could have disabled API access completely, so take a look in your GA admin panel and look for anything obvious.
+
+One reason a lot have people have seen 'forbidden' in the past is because they have the following setting unchecked: 
+go to Google Apps -> Drive, and then General Settings -> Allow users to install Google Drive apps.
+
+After changing settings, you should logout of WordPress and Google, then refresh and try all over again.
 
 = How is this different to the plugin Google Doc Embedder? =
 
