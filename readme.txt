@@ -64,7 +64,7 @@ they can simply click their way through the Wordpress login screen - no username
 
 Full support and premium features are also available for purchase:
 
-Eliminate the need for Google Apps domain admins to  separately manage WordPress user accounts, and get piece 
+Eliminate the need for Google Apps domain admins to  separately manage WordPress user accounts, and get peace 
 of mind that only authorized employees have access to the organizations's websites and intranet.
 
 **See [http://wp-glogin.com/](http://wp-glogin.com/?utm_source=Drive%20Readme&utm_medium=freemium&utm_campaign=Freemium)**

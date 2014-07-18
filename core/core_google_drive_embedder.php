@@ -133,6 +133,11 @@ class core_google_drive_embedder {
 							<label for="gdm-linktype-embed-height">Height</label> <input type="text" id="gdm-linktype-embed-height" size="7" value="400" />
 							&nbsp; &nbsp;
 							<a href="#" id="gdm-linktype-embed-more" style="display: none;" class="gdm-linktype-more">Options...</a>
+							
+							<input type="checkbox" id="gdm-linktype-embed-native" class="gdm-linktype-embed-native" style="display: none;" /> 
+							<label for="gdm-linktype-embed-native" class="gdm-linktype-embed-native" style="display: none;" >Embed as Drive doc 
+							[<a href="http://wp-glogin.com/drive/support/?utm_source=EmbedNative&utm_medium=freemium&utm_campaign=Drive#embed-native" target="_blank">?</a>]
+							</label>
 						</span>
 					</div> 
 
@@ -407,7 +412,7 @@ class core_google_drive_embedder {
 		?>
 			<div class="error">
 	        	<p>You will need to install and configure 
-	        		<a href="http://wp-glogin.com/?utm_source=Admin%20Configmsg&utm_medium=freemium&utm_campaign=Drive" 
+	        		<a href="http://wp-glogin.com/google-apps-login-premium/?utm_source=Admin%20Configmsg&utm_medium=freemium&utm_campaign=Drive" 
 	        		target="_blank">Google Apps Login</a>  
 	        		plugin in order for Google Drive Embedder to work. (Requires v2.0+ of Free or Professional)
 	        	</p>
