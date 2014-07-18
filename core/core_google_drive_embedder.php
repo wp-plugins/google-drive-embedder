@@ -412,7 +412,7 @@ class core_google_drive_embedder {
 		?>
 			<div class="error">
 	        	<p>You will need to install and configure 
-	        		<a href="http://wp-glogin.com/?utm_source=Admin%20Configmsg&utm_medium=freemium&utm_campaign=Drive" 
+	        		<a href="http://wp-glogin.com/google-apps-login-premium/?utm_source=Admin%20Configmsg&utm_medium=freemium&utm_campaign=Drive" 
 	        		target="_blank">Google Apps Login</a>  
 	        		plugin in order for Google Drive Embedder to work. (Requires v2.0+ of Free or Professional)
 	        	</p>
