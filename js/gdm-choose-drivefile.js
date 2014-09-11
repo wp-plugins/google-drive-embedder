@@ -5,8 +5,8 @@ var gdmDriveMgr = {
 
 	gdmPrevTokenStore : {},
 	
-	savedWidth : '',
-	savedHeight : '',
+	savedWidth : '100%',
+	savedHeight : '400',
 	
 	serviceType : 'drive',
 	
@@ -24,7 +24,7 @@ var gdmDriveMgr = {
 		
 		if (!self.getServiceHandler().getAvailable()) {
 			self.gdmStartThinking();
-			jQuery('#gdm-thinking-text').html('<p>Embed Google Calendars as well as Drive files<br /> by purchasing the premium version of Google Drive Embedder<br/> '
+			jQuery('#gdm-thinking-text').html('<p>Embed Google Calendars as well as Drive files<br /> by purchasing the premium or enterprise version of Google Drive Embedder<br/> '
 					+'<a href="http://wp-glogin.com/drive/?utm_source=Calendar%20Reason&utm_medium=freemium&utm_campaign=Drive" target="_blank">Find out more</a></p>'
 			);
 			return;
@@ -246,6 +246,7 @@ var gdmDriveMgr = {
 		jQuery('#gdm-linktype-embed-options').hide();
 		jQuery('#gdm-linktype-embed-reasons').hide();
 		jQuery('.gdm-linktype-embed-native').hide();
+		jQuery('.gdm-linktype-embed-folder').hide();
 	
 		if (!links.embed.url) {
 			jQuery('#gdm-linktype-embed').attr('gdm-available', 'true');
@@ -255,33 +256,40 @@ var gdmDriveMgr = {
 		else {
 			jQuery('#gdm-linktype-embed').attr('gdm-available', 'false');
 						
-			if (links.extra == 'calendar') {
-				jQuery('#gdm-linktype-embed-more').show();
+			if (links.extra == 'calendar' || (links.extra == 'folder' && gdm_trans.allow_non_iframe_folders)) {
+				jQuery('#gdm-linktype-embed-more').attr('data-gdm-embed-more-type', links.extra).show();
 			}
 			else {
 				jQuery('#gdm-linktype-embed-more').hide();
 			}
 			
-			if (links.width) {
-				gdmDriveMgr.savedWidth = jQuery('#gdm-linktype-embed-width').attr('value');
+			if (typeof links.width != 'undefined' && typeof links.height != 'undefined') {
+				if (gdmDriveMgr.saveMyDims) {
+					gdmDriveMgr.savedWidth = jQuery('#gdm-linktype-embed-width').attr('value');
+					gdmDriveMgr.savedHeight = jQuery('#gdm-linktype-embed-height').attr('value');
+				}
 				jQuery('#gdm-linktype-embed-width').attr('value', links.width);
-			}
-			else if (gdmDriveMgr.savedWidth) {
-				jQuery('#gdm-linktype-embed-width').attr('value', gdmDriveMgr.savedWidth);
-			}
-			
-			if (links.height) {
-				gdmDriveMgr.savedHeight = jQuery('#gdm-linktype-embed-height').attr('value');
 				jQuery('#gdm-linktype-embed-height').attr('value', links.height);
+				gdmDriveMgr.saveMyDims = false;
 			}
-			else if (gdmDriveMgr.savedHeight) {
-				jQuery('#gdm-linktype-embed-height').attr('value', gdmDriveMgr.savedHeight);
+			else{
+				if (gdmDriveMgr.savedWidth) {
+					jQuery('#gdm-linktype-embed-width').attr('value', gdmDriveMgr.savedWidth);
+				}
+				if (gdmDriveMgr.savedHeight) {
+					jQuery('#gdm-linktype-embed-height').attr('value', gdmDriveMgr.savedHeight);
+				}
+				gdmDriveMgr.saveMyDims = true;
 			}
 			// set width and height
-			
-			if (links.embed.native_url) {
+
+			if (links.extra == 'folder') {
+				jQuery('.gdm-linktype-embed-folder').show();
+			}
+			else if (links.embed.native_url) {
 				jQuery('.gdm-linktype-embed-native').show();
 			}
+
 		}
 		
 		jQuery('.gdm-linktypes-span input:checked').change();
@@ -325,6 +333,15 @@ var gdmDriveMgr = {
 				}
 			}
 			else if (jQuery('#gdm-linktype-embed').prop("checked")==true) {
+				
+				if (links.extra == 'folder' && jQuery('#gdm-foldertype-iframe').prop("checked")==false) {
+					// Completely different shortcode type
+					if (gdmInsertFolderShortcode) {
+						gdmInsertFolderShortcode(links);
+						return;
+					}
+				}
+				
 				linkStyle = 'embed';
 				url = links.embed.url;
 				if (links.embed.native_url && jQuery('#gdm-linktype-embed-native').prop("checked")==true) {
@@ -474,15 +491,28 @@ var gdmDriveMgr = {
 	},
 	
 	showMoreOptions : function() {
-		if (!jQuery('#gdm-more-options').is(':visible')) {
-			jQuery('#gdm-more-options').show();
+		if (!jQuery('.gdm-more-options').is(':visible')) {
+			jQuery('.gdm-more-options').show();
+			
+			// folder or calendar
+			var extraType = jQuery('#gdm-linktype-embed-more').attr('data-gdm-embed-more-type');
+			
+			if (extraType == 'folder') {
+				jQuery('#gdm-more-options-folders').show();
+				jQuery('#gdm-more-options-calendar').hide();
+			}
+			else {
+				jQuery('#gdm-more-options-folders').hide();
+				jQuery('#gdm-more-options-calendar').show();
+			}
+			
 			gdmThickDims();
 		}
 	},
 
 	hideMoreOptions : function() {
-		if (jQuery('#gdm-more-options').is(':visible')) {
-			jQuery('#gdm-more-options').hide();
+		if (jQuery('.gdm-more-options').is(':visible')) {
+			jQuery('.gdm-more-options').hide();
 			gdmThickDims();
 		}		
 	},
@@ -535,12 +565,15 @@ var gdmDriveMgr = {
 			  );
 		  }
 		  else {
-			  var useremail = gdm_trans.useremail;
+			  var params = {client_id: clientid, scope: gdm_trans.scopes, immediate: immediate,  
+	  				   include_granted_scopes: true,
+	  				   authuser: -1
+	  				   };
 			  
-			  //'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.file';
-			  
-			  gapi.auth.authorize({client_id: clientid, scope: gdm_trans.scopes, immediate: immediate, login_hint: useremail, 
-					  				   include_granted_scopes: true}, handler);
+			  if (!gdm_trans.gdm_allow_account_switch && gdm_trans.useremail != '') {
+				  params.login_hint = gdm_trans.useremail;
+		  	  }
+			  gapi.auth.authorize(params, handler);
 		  }
 	},
 	
@@ -569,8 +602,8 @@ gdmThickDims = function() {
 	var tbWidth = 640, tbHeight = 534+50;
 	var tbWindow = jQuery('#TB_window'), H = jQuery(window).height(), W = jQuery(window).width(), w, h;
 
-	var moreBox = jQuery('#gdm-more-options');
-	if (moreBox.is(':visible')) {
+	var moreBox = jQuery('.gdm-more-options:visible');
+	if (moreBox.length > 0) {
 		tbHeight += moreBox.height();
 	}
 	
@@ -579,7 +612,7 @@ gdmThickDims = function() {
 
 	if ( tbWindow.size() ) {
 		tbWindow.width(w).height(h);
-		jQuery('#TB_ajaxContent').width(w).height(h - 27).css('padding', '0');
+		jQuery('#TB_ajaxContent').width(w).height(h - 31).css('padding', '0');
 		tbWindow.css({'margin-left': '-' + parseInt((w / 2),10) + 'px'});
 		/* if ( typeof document.body.style.maxWidth !== 'undefined' ) {
 			tbWindow.css({'top':'30px','margin-top':'0'});

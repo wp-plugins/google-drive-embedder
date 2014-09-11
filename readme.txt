@@ -3,7 +3,7 @@ Contributors: danlester
 Tags: drive, google, document, google apps, google drive, sso, single-sign-on, auth, intranet, embed
 Requires at least: 3.3
 Tested up to: 4.0
-Stable tag: 2.3
+Stable tag: 3.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -19,7 +19,7 @@ You will need to set document sharing settings to ensure your website viewers ha
 
 **This plugin requires that you also install the free (or premium) version of the popular [Google Apps Login](http://wp-glogin.com/wpgoogleappslogin) plugin**
 
-Now displays many file types such as PDF, Word DOC, ZIP etc plus native Google docs (Spreadsheet, Drawing, etc).
+Displays many file types such as PDF, Word DOC, ZIP etc plus native Google docs (Spreadsheet, Drawing, etc). Step through a list of your Drive files or search to find the one you're looking for.
 
 Choose from:
  
@@ -30,9 +30,11 @@ Choose from:
 Useful for public websites or private intranets (all visitors should be able to view files as long as sharing settings are 'anyone with the link can view' or higher in Google Drive). 
 Works on all WordPress installations including multisite networks.
 
-= Premium version and Support =
+= Paid versions and Support =
 
-You can also purchase the premium version of the plugin for some important extra features:
+You can also purchase the premium or enterprise versions of Google Drive Embedder, including support.
+
+The **Premium version** contains some important extra features:
 
 * Google Calendars: pick from your Google Calendars and provide download links to ICAL or XML, or embed them directly in your site.
 * Google Docs export: provide links to downloadable versions of Google Docs, e.g. Spreadsheets exported as PDF or Excel.
@@ -40,13 +42,25 @@ You can also purchase the premium version of the plugin for some important extra
 * Embed Images: serve them directly from Google Drive, respecting your Google sharing settings.
 * Support and updates for one year.
 
-Visit our website for pricing and purchase details: 
-[http://wp-glogin.com/drive/](http://wp-glogin.com/drive/?utm_source=Drive%20ReadmePromo&utm_medium=freemium&utm_campaign=Freemium)
+[Premium - See details and purchase](http://wp-glogin.com/drive/?utm_source=Drive%20ReadmePromo&utm_medium=freemium&utm_campaign=Freemium)
+
+The **Enterprise version** integrates Google Drive much more closely with your WordPress intranet, essentially allowing each 
+page or post on your intranet to host its own file attachments, completely backed by Drive.
+
+This means you no longer need to manage Drive and your Intranet as two completely separate document sharing systems!
+
+It also introduces advanced *interactive embedded folders*, where users can preview files and drill-down into subfolders all without 
+leaving your site.
+
+It also contains all the features of the basic and premium versions.
+
+[Enterprise - Find out more](http://wp-glogin.com/drive/enterprise/?utm_source=Drive%20ReadmeEntPromo&utm_medium=freemium&utm_campaign=Freemium)
 
 = Requirements =
 
 Google Drive document embedding and one-click login will work for the following domains and user accounts:
 
+*  Google Apps for Work
 *  Google Apps for Business
 *  Google Apps for Education
 *  Google Apps for Non-profits
@@ -81,10 +95,10 @@ of mind that only authorized employees have access to the organizations's websit
 
 = How can I obtain support for this product? =
 
-Full support is available if you purchase the premium license from the author via:
+Full support is available if you purchase the premium or enterprise license from the author via:
 [https://wp-glogin.com/drive/](https://wp-glogin.com/drive/?utm_source=Drive%20Readme%20Premium&utm_medium=freemium&utm_campaign=Freemium)
 
-The premium plugin also supports more file types (such as embedded Videos and Drive Folders) and allows you to 
+The paid plugins also support more file types (such as embedded Videos and Drive Folders) and allows you to 
 browse your Google Calendars to embed in your posts/pages.
 
 Please feel free to email [support@wp-glogin.com](mailto:support@wp-glogin.com) with any questions (specifying Drive in the subject),
@@ -93,6 +107,24 @@ is specific to your installation or requirements.
 
 We may occasionally be able to respond to support queries posted on the 'Support' forum here on the wordpress.org
 plugin page, but we recommend sending us an email instead if possible.
+
+= How can I embed Drive Folders in my website? =
+
+You will need to purchase either the premium or enterprise version of Google Drive Embedder from 
+[our website](https://wp-glogin.com/drive/?utm_source=Drive%20Readme%20FoldersWebsite&utm_medium=freemium&utm_campaign=Freemium).
+
+The Premium version will allow you to embed folders in a basic 'iframe' format.
+
+For advanced 'interactive' folders, where users can preview files and drill-down into subfolders all without leaving your site, 
+please take a look at the 
+[Enterprise version](https://wp-glogin.com/drive/enterprise/?utm_source=Drive%20Readme%20FoldersEnterprise&utm_medium=freemium&utm_campaign=Freemium).
+
+The Enterprise version of Google Drive Embedder integrates Drive much more closely with your WordPress intranet, 
+essentially allowing each page or post on your intranet to host its own file attachments, completely backed by Drive.
+
+This means you no longer need to manage Drive and your Intranet as two completely separate document sharing systems!
+
+[Find out more](https://wp-glogin.com/drive/enterprise/?utm_source=Drive%20Readme%20FoldersEnterprise&utm_medium=freemium&utm_campaign=Freemium).
 
 = Why is the option for Viewer / Download / Embed disabled for some files? =
 
@@ -104,7 +136,7 @@ settings within Google Drive to 'anyone with the link may view', or higher.
 If that still doesn't work, your file type may not be supported. Please get in touch (send your file or share with 
 us if possible), and we will see if it can be supported - email contact@wp-glogin.com.
 
-To embed Google Drive Folders or image file types, you will require the premium version of the plugin. You will be 
+To embed Google Drive Folders or image file types, you will require the premium or enterprise version of the plugin. You will be 
 notified if that is the case for your selected file.
 
 = How does the plugin respect Google Drive sharing settings? =
@@ -178,7 +210,7 @@ Are you sure you have upgraded to the latest version - must be 2.0 or higher?
 Have you also configured the plugin? Under Settings -> Google Apps Login, you will need to follow the instructions 
 to obtain a Client ID and Client Secret from Google Cloud Console, and enter them into that settings page.
 
-= How can I purchase the premium version? =
+= How can I purchase the premium or enterprise version? =
 
 You can purchase a license here: 
 [http://wp-glogin.com/drive/](http://wp-glogin.com/drive/?utm_source=Drive%20ReadmeFAQ&utm_medium=freemium&utm_campaign=Freemium)
@@ -295,6 +327,10 @@ Please get in touch if you would like to make suggestions for further CSS config
 
 
 == Changelog ==
+
+= 3.1 =
+
+Tidied up file structure, and brought documentation in line with the new Enterprise version of Google Drive Embedder.
 
 = 2.3 =
 

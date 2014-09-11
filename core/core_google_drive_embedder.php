@@ -4,17 +4,21 @@ class core_google_drive_embedder {
 	
 	protected function __construct() {
 		$this->add_actions();
+		register_activation_hook($this->my_plugin_basename(), array( $this, 'gdm_activation_hook' ) );
+	}
+	
+	// May be overridden in basic or premium
+	public function gdm_activation_hook($network_wide) {
 	}
 	
 	public function gdm_gather_scopes($scopes) {
-		return array_merge($scopes, Array('https://www.googleapis.com/auth/drive.readonly',
-										  'https://www.googleapis.com/auth/drive.file'));
+		return array_merge($scopes, Array('https://www.googleapis.com/auth/drive.readonly'));
 	}
 
 	public function gdm_media_button() {
 		global $wp_version;
 		$output = '';
-	
+		
 		if ( version_compare( $wp_version, '3.5', '<' ) ) {
 			$img = '<img src="' . $this->my_plugin_url() . 'images/gdm-media.png" alt="Add Google File"/>';
 			$output = '<a href="#TB_inline?width=700&height=484&inlineId=gdm-choose-drivefile" id="gdm-thickbox-trigger" class="thickbox" title="Add Google file">' . $img . '</a>';
@@ -30,8 +34,8 @@ class core_google_drive_embedder {
 		$extra_js_name = $this->get_extra_js_name();
 		wp_register_script( 'gdm_choose_drivefile_js', $this->my_plugin_url().'js/gdm-choose-drivefile.js', array('jquery', 'gdm_'.$extra_js_name.'_drivefile_js') );
 		wp_localize_script( 'gdm_choose_drivefile_js', 'gdm_trans', $this->get_translation_array() );
-		wp_enqueue_script( 'gdm_'.$extra_js_name.'_drivefile_js', $this->my_plugin_url().'js/gdm-'.$extra_js_name.'-drivefile.js', array('jquery') );
 		wp_enqueue_script( 'gdm_choose_drivefile_js' );
+		wp_enqueue_script( 'gdm_'.$extra_js_name.'_drivefile_js', $this->my_plugin_url().'js/gdm-'.$extra_js_name.'-drivefile.js', array('jquery') );
 		wp_enqueue_script( 'google-js-api', 'https://apis.google.com/js/client.js?onload=gdmHandleGoogleJsClientLoad', array('gdm_choose_drivefile_js') );
 		wp_enqueue_style( 'gdm_choose_drivefile_css', $this->my_plugin_url().'css/gdm-choose-drivefile.css' );
 		wp_enqueue_script( 'thickbox' );
@@ -44,11 +48,12 @@ class core_google_drive_embedder {
 		
 		// Get current user's email address
 		$current_user = wp_get_current_user();
-		$email = $current_user->user_email;
+		$email = $current_user ? $current_user->user_email : '';
 		
 		return Array( 'scopes' => implode(' ', $this->gdm_gather_scopes(Array()) ),
 					  'clientid' => $clientid,
-					  'useremail' => $email );
+					  'useremail' => $email,
+					  'allow_non_iframe_folders' => $this->allow_non_iframe_folders());
 	}
 	
 	protected function get_extra_js_name() {
@@ -88,7 +93,7 @@ class core_google_drive_embedder {
 				<div id="gdm-linktypes-div" class="gdm-group">
 					<div>
 						<span class="gdm-linktypes-span">
-							<input type="radio" name="gdm-linktypes" id="gdm-linktype-normal" checked="checked" />
+							<input type="radio" name="gdm-linktypes" id="gdm-linktype-normal" />
 							<label for="gdm-linktype-normal">Viewer file link</label>
 						</span>
 						<span id="gdm-linktype-normal-options" class="gdm-linktype-options">
@@ -121,7 +126,7 @@ class core_google_drive_embedder {
 					
 					<div class="gdm-embeddable-only">
 						<span class="gdm-linktypes-span">
-							<input type="radio" name="gdm-linktypes" id="gdm-linktype-embed" />
+							<input type="radio" name="gdm-linktypes" id="gdm-linktype-embed" checked="checked" />
 							<label for="gdm-linktype-embed">Embed document
 								<span id="gdm-linktype-embed-reasons"></span>
 							</label>
@@ -135,9 +140,10 @@ class core_google_drive_embedder {
 							<a href="#" id="gdm-linktype-embed-more" style="display: none;" class="gdm-linktype-more">Options...</a>
 							
 							<input type="checkbox" id="gdm-linktype-embed-native" class="gdm-linktype-embed-native" style="display: none;" /> 
-							<label for="gdm-linktype-embed-native" class="gdm-linktype-embed-native" style="display: none;" >Embed as Drive doc 
+							<label for="gdm-linktype-embed-native" class="gdm-linktype-embed-native" style="display: none;" >Embed as Drive 
 							[<a href="http://wp-glogin.com/drive/support/?utm_source=EmbedNative&utm_medium=freemium&utm_campaign=Drive#embed-native" target="_blank">?</a>]
 							</label>
+							
 						</span>
 					</div> 
 
@@ -154,6 +160,10 @@ class core_google_drive_embedder {
 			</div>
 		</div>
 		<?php
+	}
+	
+	protected function allow_non_iframe_folders() {
+		return false;
 	}
 	
 	// Extended in premium
@@ -178,7 +188,7 @@ class core_google_drive_embedder {
 	
 	public function gdm_shortcode_display_drivefile($atts, $content=null) {
 		if (!isset($atts['url'])) {
-			return '<b>gdm-drivefile requires a url attribute</b>';
+			return '<b>google-drive-embed requires a url attribute</b>';
 		}
 		$url = $atts['url'];
 		$title = isset($atts['title']) ? $atts['title'] : $url; // Should be html-encoded already
@@ -212,7 +222,7 @@ class core_google_drive_embedder {
 		if (!is_null($content)) {
 			$returnhtml .= do_shortcode($content);
 		}
-		return $returnhtml.(is_null($content));
+		return $returnhtml;
 	}
 	
 	// ADMIN OPTIONS
@@ -258,13 +268,19 @@ class core_google_drive_embedder {
 		
 		<h2>Google Drive Embedder setup</h2>
 		
-		<div>
-
+		<?php $this->output_instructions_button(); ?>
 		
-		<form action="<?php echo $submit_page; ?>" method="post">
+		<div id="gdm-tablewrapper">
+
+		<?php $this->draw_admin_settings_tabs(); ?>
+		
+		<form action="<?php echo $submit_page; ?>" method="post" id="gdm_form">
 		
 		<?php 
 		settings_fields($this->get_options_pagename());
+
+		$this->gdm_extrasection_text();
+		
 		$this->gdm_mainsection_text();
 		
 		$this->gdm_options_submit();
@@ -274,6 +290,14 @@ class core_google_drive_embedder {
 		</div>
 		
 		</div>  <?php
+	}
+
+	// Override in Enterprise
+	protected function output_instructions_button() {
+	}
+	
+	// Override in professional
+	protected function draw_admin_settings_tabs() {
 	}
 	
 	protected function gdm_options_submit() {
@@ -286,6 +310,8 @@ class core_google_drive_embedder {
 	
 	// Extended in basic and premium
 	protected function gdm_mainsection_text() {
+	}
+	protected function gdm_extrasection_text() {
 	}
 	
 	public function gdm_options_validate($input) {
@@ -303,8 +329,9 @@ class core_google_drive_embedder {
 	
 		if (isset($_POST[$this->get_options_name()]) && is_array($_POST[$this->get_options_name()])) {
 			$inoptions = $_POST[$this->get_options_name()];
+			
 			$outoptions = $this->gdm_options_validate($inoptions);
-				
+			
 			$error_code = Array();
 			$error_setting = Array();
 			foreach (get_settings_errors() as $e) {
@@ -414,7 +441,7 @@ class core_google_drive_embedder {
 	        	<p>You will need to install and configure 
 	        		<a href="http://wp-glogin.com/google-apps-login-premium/?utm_source=Admin%20Configmsg&utm_medium=freemium&utm_campaign=Drive" 
 	        		target="_blank">Google Apps Login</a>  
-	        		plugin in order for Google Drive Embedder to work. (Requires v2.0+ of Free or Professional)
+	        		plugin in order for Google Drive Embedder to work. (Requires v2.5.2+ of Free or Professional)
 	        	</p>
 	    	</div> <?php
 		}
@@ -435,6 +462,11 @@ class core_google_drive_embedder {
 			}
 		}
 	}
+
+}
+
+
+class gdm_Drive_Exception extends Exception {
 
 }
 

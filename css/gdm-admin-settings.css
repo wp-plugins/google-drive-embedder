@@ -1,0 +1,13 @@
+
+p#gdm-base-folder-existing-error {
+	color: red;
+}
+
+.gdmtab.active {
+    display: block;
+}
+
+.gdmtab {
+    display: none;
+}
+

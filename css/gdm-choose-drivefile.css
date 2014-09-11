@@ -93,6 +93,7 @@ span.gdm-drivefile-title {
 
 #gdm-linktypes-div div {
 	height: 28px;
+	width: 600px;
 }
 
 .gdm-linktypes-span {
@@ -111,7 +112,7 @@ span.gdm-drivefile-title {
 }
 
 .gdm-linktype-options {
-	margin-left: 46px;
+	margin-left: 32px;
 }
 
 #gdm-linktype-download-reasons {
@@ -135,4 +136,32 @@ table.gdm-more-table {
 table.gdm-more-table tr td {
 	padding: 5px;
 	vertical-align: top;
+}
+
+/* Folders dialog box */
+
+div.gdm-foldertypes-div table.gdm-permissions-table {
+    margin-bottom: 10px;
+    margin-left: 50px;
+    margin-top: 5px;
+}
+
+div#gdm-more-options-folders {
+	width: 100%;
+	background-color: #CCCCCC;
+	padding-left: 5px;
+}
+
+.gdm-foldertypes-div {
+    padding: 5px;
+}
+
+.gdm-foldertypes-div > div {
+    margin-top: 10px;
+    padding-left: 50px;
+}
+
+ul.gdm-rolemenu  {
+	max-height: 13em;
+	overflow: scroll;
 }
