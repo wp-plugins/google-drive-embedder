@@ -216,7 +216,8 @@ class core_google_drive_embedder {
 			case 'embed':
 				$width = isset($atts['width']) ? $atts['width'] : '100%';
 				$height = isset($atts['height']) ? $atts['height'] : '400';
-				$returnhtml = "<iframe width='${width}' height='${height}' frameborder='0' scrolling='no' src='${url}'></iframe>";
+				$scrolling = isset($atts['scrolling']) && strtolower($atts['scrolling']) == 'yes' ? 'yes' : 'no';
+				$returnhtml = "<iframe width='${width}' height='${height}' frameborder='0' scrolling='".$scrolling."' src='${url}'></iframe>";
 				break;
 		}
 		if (!is_null($content)) {

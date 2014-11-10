@@ -30,6 +30,8 @@ Choose from:
 Useful for public websites or private intranets (all visitors should be able to view files as long as sharing settings are 'anyone with the link can view' or higher in Google Drive). 
 Works on all WordPress installations including multisite networks.
 
+[youtube http://www.youtube.com/watch?v=wcpjcFJIOko]
+
 = Paid versions and Support =
 
 You can also purchase the premium or enterprise versions of Google Drive Embedder, including support.
