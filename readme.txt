@@ -3,7 +3,7 @@ Contributors: danlester
 Tags: drive, google, document, google apps, google drive, sso, single-sign-on, auth, intranet, embed
 Requires at least: 3.3
 Tested up to: 4.0
-Stable tag: 3.1
+Stable tag: 3.1.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -329,6 +329,12 @@ Please get in touch if you would like to make suggestions for further CSS config
 
 
 == Changelog ==
+
+= 3.1.1 =
+
+Introduced 'Embed As Drive' option (now default) for non-native file types (e.g. PDF, Word, Excel). 
+This uses Drive natively rather than sending the file via the external Google File Viewer. 
+It also means non-native file types can be embedded based on permissions of the logged-in Google user - does not required Anyone with the link can view.
 
 = 3.1 =
 

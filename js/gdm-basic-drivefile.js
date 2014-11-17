@@ -43,6 +43,9 @@ var gdmDriveServiceHandler = {
 				if (drivefile.webContentLink) {
 					if (drivefile.shared) {
 						links.embed.url = '//docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(drivefile.webContentLink);
+						if (drivefile.alternateLink) {
+							links.embed.native_url = drivefile.alternateLink.replace(/\/edit(\?|$)/g, '/view?');
+						}
 					}
 					else {
 						links.embed.reason = 'SHARE';

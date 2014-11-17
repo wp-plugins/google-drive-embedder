@@ -139,7 +139,7 @@ class core_google_drive_embedder {
 							&nbsp; &nbsp;
 							<a href="#" id="gdm-linktype-embed-more" style="display: none;" class="gdm-linktype-more">Options...</a>
 							
-							<input type="checkbox" id="gdm-linktype-embed-native" class="gdm-linktype-embed-native" style="display: none;" /> 
+							<input type="checkbox" id="gdm-linktype-embed-native" class="gdm-linktype-embed-native" checked="checked" style="display: none;" /> 
 							<label for="gdm-linktype-embed-native" class="gdm-linktype-embed-native" style="display: none;" >Embed as Drive 
 							[<a href="http://wp-glogin.com/drive/support/?utm_source=EmbedNative&utm_medium=freemium&utm_campaign=Drive#embed-native" target="_blank">?</a>]
 							</label>
