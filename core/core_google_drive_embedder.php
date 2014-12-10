@@ -138,12 +138,6 @@ class core_google_drive_embedder {
 							<label for="gdm-linktype-embed-height">Height</label> <input type="text" id="gdm-linktype-embed-height" size="7" value="400" />
 							&nbsp; &nbsp;
 							<a href="#" id="gdm-linktype-embed-more" style="display: none;" class="gdm-linktype-more">Options...</a>
-							
-							<input type="checkbox" id="gdm-linktype-embed-native" class="gdm-linktype-embed-native" checked="checked" style="display: none;" /> 
-							<label for="gdm-linktype-embed-native" class="gdm-linktype-embed-native" style="display: none;" >Embed as Drive 
-							[<a href="http://wp-glogin.com/drive/support/?utm_source=EmbedNative&utm_medium=freemium&utm_campaign=Drive#embed-native" target="_blank">?</a>]
-							</label>
-							
 						</span>
 					</div> 
 
@@ -155,6 +149,11 @@ class core_google_drive_embedder {
 					<input type="button" id="gdm-insert-drivefile" class="button-primary" 
 							value="Insert File" disabled="disabled" />
 					<a id="gdm-cancel-drivefile-insert" class="button-secondary" onclick="tb_remove();" title="Cancel">Cancel</a>
+					
+					<span id="gdm-ack-owner-editor" style="display: none;">
+					<input type="checkbox" id="gdm-ack-owner-editor-checkbox" class="gdm-ack-owner-editor" />
+					<label for="gdm-ack-owner-editor-checkbox">I acknowledge that I will be demoted from owner to editor</label>
+					</span>
 				</p>
 				
 			</div>
