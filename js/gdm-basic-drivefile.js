@@ -2,6 +2,10 @@
 var gdmDriveServiceHandler = {
 		
 	getAvailable : function() {return true;},
+	
+	allowSetEmbedOwnerParent : function() {return false;},
+	showOwnerEditorWarning : function() {return false;},
+	allowInsertDriveFile : function() {return true;},
 		
 	getRequest : function(params) {
 		params.trashed = false;
@@ -40,13 +44,15 @@ var gdmDriveServiceHandler = {
 				links.download.reason = 'FOLDERDOWNLOAD';
 			}
 			else {
-				if (drivefile.webContentLink) {
-					if (drivefile.shared) {
-						links.embed.url = '//docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(drivefile.webContentLink);
-					}
-					else {
-						links.embed.reason = 'SHARE';
-					}
+				if (drivefile.alternateLink) {
+					links.embed.url = drivefile.alternateLink.replace(/\/edit(\?|$)/g, '/view?');
+				}
+				else if (drivefile.webContentLink) {
+					// Old-style Google Doc Viewer as fallback
+					links.embed.url = '//docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(drivefile.webContentLink);
+				}
+				else {
+					links.embed.reason = 'WEBCONTENT';
 				}
 			}
 		}
@@ -80,6 +86,10 @@ var gdmDriveServiceHandler = {
 				return 'Not possible to download this type';
 				break;
 				
+			case 'WEBCONTENT':
+				return 'There is no content available';
+				break;
+				
 			default:
 				return 'Not possible for this file type';
 		}
@@ -91,6 +101,10 @@ var gdmDriveServiceHandler = {
 var gdmCalendarServiceHandler = {
 		
 	getAvailable : function() {return false;},
+	
+	allowSetEmbedOwnerParent : function() {return false;},
+	showOwnerEditorWarning : function() {return false;},
+	allowInsertDriveFile : function() {return false;},
 	
 	getAllowSearch : function() { return false; },
 	

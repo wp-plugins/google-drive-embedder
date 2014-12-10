@@ -201,6 +201,8 @@ var gdmDriveMgr = {
 		jQuery('#gdm-linktype-download-reasons').hide();
 		jQuery('#gdm-linktype-embed-options').hide();
 		jQuery('#gdm-linktype-embed-reasons').hide();
+		
+		jQuery('#gdm-ack-owner-editor').hide();
 	},
 	
 	gdmSomethingSelected : function(links) {
@@ -220,6 +222,8 @@ var gdmDriveMgr = {
 		
 		jQuery('#gdm-linktype-download-options').hide();
 		jQuery('#gdm-linktype-download-reasons').hide();
+		
+		jQuery('#gdm-ack-owner-editor').hide();
 	
 		if (!links.download.url && !links.download.exports) {
 			jQuery('#gdm-linktype-download').attr('gdm-available', 'true');
@@ -245,7 +249,6 @@ var gdmDriveMgr = {
 
 		jQuery('#gdm-linktype-embed-options').hide();
 		jQuery('#gdm-linktype-embed-reasons').hide();
-		jQuery('.gdm-linktype-embed-native').hide();
 		jQuery('.gdm-linktype-embed-folder').hide();
 	
 		if (!links.embed.url) {
@@ -286,13 +289,15 @@ var gdmDriveMgr = {
 			if (links.extra == 'folder') {
 				jQuery('.gdm-linktype-embed-folder').show();
 			}
-			else if (links.embed.native_url) {
-				jQuery('.gdm-linktype-embed-native').show();
-			}
 
 		}
 		
 		jQuery('.gdm-linktypes-span input:checked').change();
+		
+		// Enterprise only
+		if (gdmDriveMgr.getServiceHandler().showOwnerEditorWarning()) {
+			jQuery('#gdm-ack-owner-editor').show();
+		}
 
 	},
 	
@@ -301,6 +306,11 @@ var gdmDriveMgr = {
 		var selDiv = jQuery('.gdm-drivefile-div.gdm-selected');
 		
 		if (selDiv.length > 0) {
+			
+			if (!gdmDriveMgr.getServiceHandler().allowInsertDriveFile()) {
+				return;
+			}
+			
 			var link = selDiv.find('span.gdm-drivefile-title a');
 			var url = link.attr('href');
 			
@@ -344,9 +354,6 @@ var gdmDriveMgr = {
 				
 				linkStyle = 'embed';
 				url = links.embed.url;
-				if (links.embed.native_url && jQuery('#gdm-linktype-embed-native').prop("checked")==true) {
-					url = links.embed.native_url;
-				}
 				var width = gdmDriveMgr.gdmValidateDimension(jQuery('#gdm-linktype-embed-width').attr('value'), '100%');
 				var height = gdmDriveMgr.gdmValidateDimension(jQuery('#gdm-linktype-embed-height').attr('value'), '400');
 				extraattrs = ' width="'+width+'" height="'+height+'"';
@@ -375,13 +382,19 @@ var gdmDriveMgr = {
 					url += "&" + param + "=" + extraparams[param];
 				}
 			}
-			
+						
 			// Send to editor
 			window.send_to_editor('[google-drive-embed url="'+url+'" title="'
 					+gdmDriveMgr.stripQuots(link.text())+'"'
 					+' icon="'+icon.attr('src')+'"'
 					+extraattrs
 					+' style="'+linkStyle+'"]');
+			
+			// Set file parent/owner in Enterprise version
+			if (gdmDriveMgr.getServiceHandler().allowSetEmbedOwnerParent()) {
+				gdmSetEmbedSAOwnerParent(id);
+			}
+
 		}
 	},
 	
