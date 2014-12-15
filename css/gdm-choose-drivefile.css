@@ -165,3 +165,9 @@ ul.gdm-rolemenu  {
 	max-height: 13em;
 	overflow: scroll;
 }
+
+#gdm-ack-owner-editor {
+	color: blue;
+	margin-left: 5px;
+}
+
