@@ -2,7 +2,7 @@
 Contributors: danlester
 Tags: drive, google, document, google apps, google drive, sso, single-sign-on, auth, intranet, embed
 Requires at least: 3.3
-Tested up to: 4.1
+Tested up to: 4.2
 Stable tag: 3.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -332,7 +332,7 @@ Please get in touch if you would like to make suggestions for further CSS config
 
 = 3.3 =
 
-Workaround for a Google change to iFrame permissions - PDF and other standalone docs now embed correctly again.
+Workaround for a Google change to iFrame permissions - PDF and other standalone docs now embed better.
 
 = 3.2 =
 
