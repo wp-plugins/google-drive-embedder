@@ -45,7 +45,7 @@ var gdmDriveServiceHandler = {
 			}
 			else {
 				if (drivefile.alternateLink) {
-					links.embed.url = drivefile.alternateLink.replace(/\/edit(\?|$)/g, '/preview?');
+					links.embed.url = drivefile.alternateLink.replace(/\/(edit|view)(\?|$)/g, '/preview?');
 				}
 				else if (drivefile.webContentLink) {
 					// Old-style Google Doc Viewer as fallback
